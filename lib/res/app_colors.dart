@@ -19,4 +19,17 @@ class AppColors {
   // UI Element Colors
   static const Color iconBlue = Color(0xFF0A375C);
   static const Color dividerGray = Color(0xFFE0E0E0);
+
+  // Gradients
+  static const LinearGradient orangeGradient = LinearGradient(
+    colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient navyGradient = LinearGradient(
+    colors: [Color(0xFF0A375C), Color(0xFF124E7D)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 }

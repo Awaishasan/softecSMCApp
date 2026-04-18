@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import '../services/auth_services.dart';
-import '../views/dashboard_view.dart';
+import '../res/Routes/appRoute.dart';
 
 class AuthViewModel extends GetxController {
   final AuthServices _authServices = AuthServices();
@@ -23,7 +23,7 @@ class AuthViewModel extends GetxController {
     isLoading = false;
     if (result != null) {
       Get.snackbar('Success', 'Account created successfully');
-      Get.off(() => const DashboardView()); // Remove login from stack
+      Get.offAllNamed(AppRoute.Dashboard); // ✅ Uses binding, controllers pre-registered
     }
     update();
   }
@@ -38,7 +38,7 @@ class AuthViewModel extends GetxController {
     isLoading = false;
     if (result != null) {
       Get.snackbar('Success', 'Logged in successfully');
-      Get.off(() => const DashboardView()); // Remove login from stack
+      Get.offAllNamed(AppRoute.Dashboard); // ✅ Uses binding, controllers pre-registered
     }
     update();
   }
@@ -52,5 +52,8 @@ class AuthViewModel extends GetxController {
     
     isLoading = false;
     update();
+    
+    // Redirect to Login
+    Get.offAllNamed('/login'); // Assuming AppRoute.LOGIN is '/login'
   }
 }
