@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import '../res/app_colors.dart';
+import '../views/cash_flow/send_money_sheet.dart';
 import 'quick_action_button.dart';
 
 class QuickActionsRow extends StatelessWidget {
   const QuickActionsRow({super.key});
+
+  void _showSheet(BuildContext context, Widget sheet) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => sheet,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,22 +25,22 @@ class QuickActionsRow extends StatelessWidget {
       children: [
         QuickActionButton(
           label: 'Send',
-          icon: Icons.unfold_less_rounded,
+          icon: Icons.arrow_upward_rounded,
           color: Colors.blue,
-          onTap: () {},
+          onTap: () => _showSheet(context, SendMoneySheet()),
         ),
         QuickActionButton(
           label: 'Receive',
-          icon: Icons.unfold_more_rounded,
+          icon: Icons.arrow_downward_rounded,
           gradient: const LinearGradient(
               colors: [Colors.tealAccent, Colors.green]),
-          onTap: () {},
+          onTap: () => _showSheet(context, ReceiveMoneySheet()),
         ),
         QuickActionButton(
           label: 'Add Money',
           icon: Icons.add_rounded,
           gradient: AppColors.orangeGradient,
-          onTap: () {},
+          onTap: () => _showSheet(context, AddMoneySheet()),
         ),
       ],
     );

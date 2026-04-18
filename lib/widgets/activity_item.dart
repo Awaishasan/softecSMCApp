@@ -49,7 +49,7 @@ class ActivityItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  "$title",
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class ActivityItem extends StatelessWidget {
             ],
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.more_horiz, color: AppColors.grayText, size: 20),
+          const Icon(Icons.more_vert, color: AppColors.grayText, size: 20),
         ],
       ),
     );

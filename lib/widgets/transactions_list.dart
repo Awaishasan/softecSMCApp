@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
-import '../view_models/dashboard_controller.dart';
+import '../view_models/cash_flow_controller.dart';
+import '../models/transaction_model.dart';
 import 'activity_item.dart';
 
 class TransactionsList extends StatelessWidget {
-  final DashboardController controller;
+  final CashFlowController controller;
 
   const TransactionsList({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
+    if (controller.transactions.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 24),
+          child: Text(
+            'No transactions yet.\nUse Send, Receive or Add Money to get started.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -16,11 +30,11 @@ class TransactionsList extends StatelessWidget {
       itemBuilder: (context, index) {
         final tx = controller.transactions[index];
         return ActivityItem(
-          title: tx['title']!,
-          subtitle: tx['subtitle']!,
-          amount: tx['amount']!,
-          time: tx['time']!,
-          type: tx['type']!,
+          title: tx.title,
+          subtitle: tx.subtitle,
+          amount: tx.formattedAmount,
+          time: tx.timeAgo,
+          type: tx.type == TransactionType.income ? 'income' : 'expense',
         );
       },
     );

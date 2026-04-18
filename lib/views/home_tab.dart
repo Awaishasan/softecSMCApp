@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../res/app_colors.dart';
 import '../view_models/dashboard_controller.dart';
+import '../view_models/cash_flow_controller.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/quick_actions_row.dart';
 import '../widgets/financial_stats_section.dart';
@@ -13,62 +15,66 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          Text(
-            'Good morning, ${controller.getUserDisplayName()}',
-            style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textBlue),
-          ),
-          const Text(
-            'Here\'s your financial overview',
-            style: TextStyle(fontSize: 14, color: AppColors.grayText),
-          ),
-          const SizedBox(height: 25),
-          BalanceCard(controller: controller),
-          const SizedBox(height: 30),
-          const QuickActionsRow(),
-          const SizedBox(height: 35),
-          const Text(
-            'Financial Overview',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textBlue),
-          ),
-          const SizedBox(height: 20),
-          FinancialStatsSection(controller: controller),
-          const SizedBox(height: 35),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return GetBuilder<CashFlowController>(
+      builder: (cashCtrl) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 20),
+              Text(
+                'Good morning, ${controller.getUserDisplayName()}',
+                style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textBlue),
+              ),
               const Text(
-                'Recent Transactions',
+                'Here\'s your financial overview',
+                style: TextStyle(fontSize: 14, color: AppColors.grayText),
+              ),
+              const SizedBox(height: 25),
+              BalanceCard(controller: cashCtrl),
+              const SizedBox(height: 30),
+              const QuickActionsRow(),
+              const SizedBox(height: 35),
+              const Text(
+                'Financial Overview',
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textBlue),
               ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('View All',
+              const SizedBox(height: 20),
+              FinancialStatsSection(controller: cashCtrl),
+              const SizedBox(height: 35),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Recent Transactions',
                     style: TextStyle(
-                        color: AppColors.primaryBlue,
-                        fontWeight: FontWeight.bold)),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlue),
+                  ),
+                  TextButton(
+                    onPressed: () => Get.find<DashboardController>().changeTabIndex(1),
+                    child: const Text('View All',
+                        style: TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
               ),
+              const SizedBox(height: 10),
+              TransactionsList(controller: cashCtrl),
+              const SizedBox(height: 30),
             ],
           ),
-          const SizedBox(height: 10),
-          TransactionsList(controller: controller),
-          const SizedBox(height: 30),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -50,7 +50,7 @@ class QuickActionButton extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 13,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: AppColors.textBlue,
           ),

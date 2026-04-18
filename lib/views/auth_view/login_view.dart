@@ -184,18 +184,18 @@ class LoginView extends StatelessWidget {
                             ),
                             const SizedBox(height: 15),
                             // Forgot Password
-                            TextButton(
-                              onPressed: () {
-                                // Action for forgot password
-                              },
-                              child: const Text(
-                                'Forgot Password?',
-                                style: TextStyle(
-                                  color: AppColors.accentOrange,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
+                            // TextButton(
+                            //   onPressed: () {
+                            //     // Action for forgot password
+                            //   },
+                            //   child: const Text(
+                            //     'Forgot Password?',
+                            //     style: TextStyle(
+                            //       color: AppColors.accentOrange,
+                            //       fontWeight: FontWeight.w600,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       );
@@ -205,27 +205,27 @@ class LoginView extends StatelessWidget {
                   SizedBox(height: screenHeight * 0.1),
 
                   // Bottom Text Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don't have an account? ",
-                        style: TextStyle(color: AppColors.blackText),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Navigate to Signup
-                        },
-                        child: const Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            color: AppColors.accentOrange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     const Text(
+                  //       "Don't have an account? ",
+                  //       style: TextStyle(color: AppColors.blackText),
+                  //     ),
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         // Navigate to Signup
+                  //       },
+                  //       child: const Text(
+                  //         "Sign Up",
+                  //         style: TextStyle(
+                  //           color: AppColors.accentOrange,
+                  //           fontWeight: FontWeight.bold,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   SizedBox(height: screenHeight * 0.02),
                 ],
               ),

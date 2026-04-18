@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../view_models/dashboard_controller.dart';
+import '../view_models/cash_flow_controller.dart';
 import 'summary_card.dart';
 
 class FinancialStatsSection extends StatelessWidget {
-  final DashboardController controller;
+  final CashFlowController controller;
 
   const FinancialStatsSection({super.key, required this.controller});
 
@@ -16,22 +16,22 @@ class FinancialStatsSection extends StatelessWidget {
             Expanded(
               child: SummaryCard(
                 title: 'Total Sales',
-                amount: '\$${controller.monthlySales.toInt()}',
+                amount: 'Rs ${controller.monthlySales.toInt()}',
                 icon: Icons.trending_up_rounded,
                 iconColor: Colors.green,
                 progress: 0.85,
-                progressText: '+12%',
+                progressText: 'Income',
               ),
             ),
             const SizedBox(width: 15),
             Expanded(
               child: SummaryCard(
                 title: 'Total Expenses',
-                amount: '\$${controller.monthlyExpenses.toInt()}',
+                amount: 'Rs ${controller.monthlyExpenses.toInt()}',
                 icon: Icons.trending_down_rounded,
                 iconColor: Colors.redAccent,
                 progress: 0.65,
-                progressText: '+5%',
+                progressText: 'Expenses',
               ),
             ),
           ],
@@ -42,7 +42,7 @@ class FinancialStatsSection extends StatelessWidget {
             Expanded(
               child: SummaryCard(
                 title: 'Receivables',
-                amount: '\$${controller.pendingReceivables.toInt()}',
+                amount: 'Rs ${controller.pendingReceivables.toInt()}',
                 icon: Icons.call_received_rounded,
                 iconColor: Colors.blue,
                 progress: 0.45,
@@ -53,7 +53,7 @@ class FinancialStatsSection extends StatelessWidget {
             Expanded(
               child: SummaryCard(
                 title: 'Payables',
-                amount: '\$${controller.pendingPayables.toInt()}',
+                amount: 'Rs ${controller.pendingPayables.toInt()}',
                 icon: Icons.call_made_rounded,
                 iconColor: Colors.orange,
                 progress: 0.30,

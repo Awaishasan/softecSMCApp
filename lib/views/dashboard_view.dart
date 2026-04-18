@@ -5,6 +5,8 @@ import '../view_models/dashboard_controller.dart';
 import '../view_models/auth_view_model.dart';
 import '../utils/dashboard_bottom_nav.dart';
 import 'home_tab.dart';
+import 'analytics/analytics_tab.dart';
+import 'settings/settings_tab.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({super.key});
@@ -14,42 +16,40 @@ class DashboardView extends GetView<DashboardController> {
     final authViewModel = Get.find<AuthViewModel>();
 
     return GetBuilder<DashboardController>(
-      builder: (controller) {
+      builder: (ctrl) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: _buildAppBar(controller, authViewModel),
+          appBar: _buildAppBar(ctrl, authViewModel),
           body: IndexedStack(
-            index: controller.selectedIndex,
+            index: ctrl.selectedIndex,
             children: [
-              HomeTab(controller: controller),
+              HomeTab(controller: ctrl),
+              const AnalyticsTab(),
               const Center(
-                  child: Text('Analytics Screen',
+                  child: Text('Cards Screen',
                       style: TextStyle(color: AppColors.textBlue))),
-              const Center(
-                  child: Text('Transactions Screen',
-                      style: TextStyle(color: AppColors.textBlue))),
-              const Center(
-                  child: Text('Profile Screen',
-                      style: TextStyle(color: AppColors.textBlue))),
+              const SettingsTab(),
             ],
           ),
-          bottomNavigationBar: DashboardBottomNav(controller: controller),
+          bottomNavigationBar: DashboardBottomNav(controller: ctrl),
         );
       },
     );
   }
 
   PreferredSizeWidget _buildAppBar(
-      DashboardController controller, AuthViewModel authViewModel) {
+      DashboardController ctrl, AuthViewModel authViewModel) {
+    final onAnalytics = ctrl.selectedIndex == 1;
+
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      title: controller.isSearchVisible
+      title: ctrl.isSearchVisible
           ? TextField(
-              controller: controller.searchTextController,
+              controller: ctrl.searchTextController,
               autofocus: true,
               decoration: const InputDecoration(
-                hintText: 'Search transactions...',
+                hintText: 'Search by name or note...',
                 border: InputBorder.none,
                 hintStyle: TextStyle(color: AppColors.grayText),
               ),
@@ -73,33 +73,30 @@ class DashboardView extends GetView<DashboardController> {
                     ],
                   ),
                   child: const Center(
-                    child: Text(
-                      '₹',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Text('₹',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Mera Hisab',
-                  style: TextStyle(
-                      color: AppColors.textBlue,
-                      fontWeight: FontWeight.bold),
-                ),
+                const Text('Mera Hisab',
+                    style: TextStyle(
+                        color: AppColors.textBlue,
+                        fontWeight: FontWeight.bold)),
               ],
             ),
       actions: [
-        IconButton(
-          icon: Icon(
-            controller.isSearchVisible ? Icons.close : Icons.search,
-            color: AppColors.textBlue,
+        // Search icon — only visible on analytics tab
+        if (onAnalytics || ctrl.isSearchVisible)
+          IconButton(
+            icon: Icon(
+              ctrl.isSearchVisible ? Icons.close : Icons.search,
+              color: AppColors.textBlue,
+            ),
+            onPressed: ctrl.toggleSearch,
           ),
-          onPressed: controller.toggleSearch,
-        ),
         Stack(
           children: [
             IconButton(
@@ -122,24 +119,26 @@ class DashboardView extends GetView<DashboardController> {
         PopupMenuButton<String>(
           icon: const Icon(Icons.settings_outlined, color: AppColors.textBlue),
           onSelected: (value) {
-            if (value == 'logout') {
-              authViewModel.signOut();
-            }
+            if (value == 'logout') authViewModel.signOut();
+            if (value == 'settings') ctrl.changeTabIndex(3);
           },
-          itemBuilder: (BuildContext context) => [
+          itemBuilder: (_) => [
             const PopupMenuItem<String>(
               value: 'settings',
-              child: Text('Settings'),
+              child: Row(children: [
+                Icon(Icons.settings_outlined,
+                    color: AppColors.iconBlue, size: 18),
+                SizedBox(width: 8),
+                Text('Settings'),
+              ]),
             ),
             const PopupMenuItem<String>(
               value: 'logout',
-              child: Row(
-                children: [
-                  Icon(Icons.logout, color: Colors.red, size: 18),
-                  SizedBox(width: 8),
-                  Text('Logout', style: TextStyle(color: Colors.red)),
-                ],
-              ),
+              child: Row(children: [
+                Icon(Icons.logout, color: Colors.red, size: 18),
+                SizedBox(width: 8),
+                Text('Logout', style: TextStyle(color: Colors.red)),
+              ]),
             ),
           ],
         ),
