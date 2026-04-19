@@ -13,6 +13,9 @@ class PdfExportService {
     required double totalExpenses,
     required String userName,
   }) async {
+    final font = await PdfGoogleFonts.robotoRegular();
+    final fontBold = await PdfGoogleFonts.robotoBold();
+    
     final pdf = pw.Document();
     final now = DateTime.now();
     final dateStr =
@@ -20,6 +23,7 @@ class PdfExportService {
 
     pdf.addPage(
       pw.MultiPage(
+        theme: pw.ThemeData.withFont(base: font, bold: fontBold),
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
         header: (_) => _buildHeader(userName, dateStr),

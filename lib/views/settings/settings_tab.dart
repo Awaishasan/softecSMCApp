@@ -53,24 +53,7 @@ class SettingsTab extends StatelessWidget {
                       activeColor: AppColors.primaryBlue,
                     ),
                   ),
-                  SettingsTile(
-                    icon: Icons.currency_exchange_rounded,
-                    iconColor: AppColors.primaryBlue,
-                    title: 'Currency',
-                    subtitle: ctrl.selectedCurrency,
-                    onTap: () => _showCurrencyPicker(context, ctrl),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(ctrl.selectedCurrency,
-                            style: const TextStyle(
-                                color: AppColors.grayText, fontSize: 13)),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.chevron_right_rounded,
-                            color: AppColors.grayText, size: 20),
-                      ],
-                    ),
-                  ),
+
                 ],
               ),
               const SizedBox(height: 20),
@@ -79,17 +62,6 @@ class SettingsTab extends StatelessWidget {
               SettingsSection(
                 title: 'Notifications',
                 tiles: [
-                  SettingsTile(
-                    icon: Icons.notifications_outlined,
-                    iconColor: Colors.orange,
-                    title: 'Push Notifications',
-                    subtitle: 'Transaction alerts & reminders',
-                    trailing: Switch(
-                      value: ctrl.notificationsEnabled,
-                      onChanged: ctrl.toggleNotifications,
-                      activeColor: AppColors.primaryBlue,
-                    ),
-                  ),
                   SettingsTile(
                     icon: Icons.payment_rounded,
                     iconColor: Colors.green,
