@@ -39,7 +39,7 @@ class DashboardBottomNav extends StatelessWidget {
           BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart_rounded), label: 'Analytics'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.credit_card_rounded), label: 'Cards'),
+              icon: Icon(Icons.people_rounded), label: 'Clients'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_outline_rounded), label: 'Settings'),
         ],

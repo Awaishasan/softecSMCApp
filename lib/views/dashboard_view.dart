@@ -6,6 +6,7 @@ import '../view_models/auth_view_model.dart';
 import '../utils/dashboard_bottom_nav.dart';
 import 'home_tab.dart';
 import 'analytics/analytics_tab.dart';
+import 'clients/clients_tab.dart';
 import 'settings/settings_tab.dart';
 
 class DashboardView extends GetView<DashboardController> {
@@ -25,9 +26,7 @@ class DashboardView extends GetView<DashboardController> {
             children: [
               HomeTab(controller: ctrl),
               const AnalyticsTab(),
-              const Center(
-                  child: Text('Cards Screen',
-                      style: TextStyle(color: AppColors.textBlue))),
+              const ClientsTab(),
               const SettingsTab(),
             ],
           ),
@@ -73,11 +72,14 @@ class DashboardView extends GetView<DashboardController> {
                     ],
                   ),
                   child: const Center(
-                    child: Text('₹',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold)),
+                    child: Text(
+                      '₹',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
