@@ -48,7 +48,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
   Widget build(BuildContext context) {
     return GetBuilder<ClientController>(
       builder: (ctrl) {
-        // Always get the freshest version of this client from the cache
+
         final client = ctrl.allClients.firstWhere(
           (c) => c.id == widget.client.id,
           orElse: () => widget.client,
@@ -58,7 +58,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
           backgroundColor: AppColors.backgroundLight,
           body: CustomScrollView(
             slivers: [
-              // ── App bar with gradient ──────────────────────────────────
+
               _ClientAppBar(client: client),
 
               SliverToBoxAdapter(
@@ -67,19 +67,19 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Contact info card ────────────────────────────
+
                       _ContactCard(client: client),
                       const SizedBox(height: 16),
 
-                      // ── Stats row ────────────────────────────────────
+
                       ClientStatsRow(client: client),
                       const SizedBox(height: 16),
 
-                      // ── Outstanding balance ──────────────────────────
+
                       ClientBalanceCard(client: client, ctrl: ctrl),
                       const SizedBox(height: 24),
 
-                      // ── Purchase history header ──────────────────────
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -97,7 +97,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      // ── Sales list ───────────────────────────────────
+
                       ClientSalesList(
                           clientId: client.id, ctrl: ctrl),
                       const SizedBox(height: 80),
@@ -108,7 +108,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
             ],
           ),
 
-          // ── FAB: Add Sale ──────────────────────────────────────────────
+
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _showAddSale(context),
             backgroundColor: AppColors.primaryBlue,
@@ -123,7 +123,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
   }
 }
 
-// ── Sliver app bar ─────────────────────────────────────────────────────────────
+
 
 class _ClientAppBar extends StatelessWidget {
   final ClientModel client;
@@ -220,7 +220,7 @@ class _ClientAppBar extends StatelessWidget {
   }
 }
 
-// ── Contact info card ──────────────────────────────────────────────────────────
+
 
 class _ContactCard extends StatelessWidget {
   final ClientModel client;

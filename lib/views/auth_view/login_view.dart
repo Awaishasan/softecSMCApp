@@ -9,11 +9,11 @@ class LoginView extends StatelessWidget {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); // Defined here to prevent accidental disposal
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // Media queries for responsiveness
+
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -86,7 +86,7 @@ class LoginView extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.05),
 
-                  // Login Card Section
+
                   GetBuilder<AuthViewModel>(
                     init: AuthViewModel(),
                     builder: (controller) {
@@ -106,7 +106,7 @@ class LoginView extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            // Email Field
+
                             TextFormField(
                               controller: emailController,
                               decoration: const InputDecoration(
@@ -122,7 +122,7 @@ class LoginView extends StatelessWidget {
                               },
                             ),
                             const Divider(),
-                            // Password Field
+
                             TextFormField(
                               controller: passwordController,
                               obscureText: controller.isPasswordHidden,

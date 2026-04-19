@@ -125,7 +125,7 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                 ),
                 const SizedBox(height: 24),
 
-                // Item description
+
                 _buildField(
                   _itemCtrl,
                   'Item / Service Description',
@@ -133,7 +133,7 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                 ),
                 const SizedBox(height: 12),
 
-                // Total amount
+
                 _buildAmountField(
                   _totalCtrl,
                   'Total Amount',
@@ -141,7 +141,7 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                 ),
                 const SizedBox(height: 12),
 
-                // Paid amount
+
                 _buildAmountField(
                   _paidCtrl,
                   'Amount Paid (0 if full credit)',
@@ -150,7 +150,7 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                 ),
                 const SizedBox(height: 16),
 
-                // Status badge
+
                 Row(
                   children: [
                     const Text('Status: ',
@@ -161,7 +161,6 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                 ),
                 const SizedBox(height: 16),
 
-                // Due date (only for credit/partial)
                 if (_status != SalePaymentStatus.paid) ...[
                   GestureDetector(
                     onTap: _pickDueDate,
@@ -202,7 +201,7 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                   const SizedBox(height: 16),
                 ],
 
-                // Submit button
+
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -261,7 +260,7 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
   }
 }
 
-// ── Shared field builders ──────────────────────────────────────────────────────
+
 
 Widget _buildField(
   TextEditingController ctrl,

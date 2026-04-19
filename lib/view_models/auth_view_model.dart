@@ -28,7 +28,7 @@ class AuthViewModel extends GetxController {
     update();
   }
 
-  // Login
+
   Future<void> login(String email, String password) async {
     isLoading = true;
     update();
@@ -43,7 +43,7 @@ class AuthViewModel extends GetxController {
     update();
   }
 
-  // Sign Out
+
   Future<void> signOut() async {
     isLoading = true;
     update();
@@ -53,7 +53,7 @@ class AuthViewModel extends GetxController {
     isLoading = false;
     update();
     
-    // Redirect to Login
+
     Get.offAllNamed('/login'); // Assuming AppRoute.LOGIN is '/login'
   }
 }

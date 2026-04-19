@@ -14,7 +14,6 @@ class CashFlowService {
   DocumentReference get _summaryDoc =>
       _db.collection('users').doc(_uid);
 
-  // Add a transaction and update summary atomically
   Future<void> addTransaction({
     required String title,
     required String subtitle,
@@ -34,7 +33,7 @@ class CashFlowService {
       userId: _uid,
     ).toMap());
 
-    // Update summary counters
+
     final Map<String, dynamic> summaryUpdate = {};
     switch (type) {
       case TransactionType.income:
@@ -56,7 +55,7 @@ class CashFlowService {
     await batch.commit();
   }
 
-  // Fetch summary data
+
   Future<Map<String, dynamic>> fetchSummary() async {
     final doc = await _summaryDoc.get();
     if (!doc.exists) return {};
@@ -80,7 +79,7 @@ class CashFlowService {
             .toList());
   }
 
-  // Stream ALL transactions (analytics screen)
+
   Stream<List<TransactionModel>> allTransactionsStream() {
     return _txCol
         .orderBy('createdAt', descending: true)

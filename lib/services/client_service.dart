@@ -15,7 +15,7 @@ class ClientService {
   CollectionReference _salesCol(String clientId) =>
       _clientsCol.doc(clientId).collection('sales');
 
-  // ── Clients ────────────────────────────────────────────────────────────────
+
 
   Stream<List<ClientModel>> clientsStream() {
     return _clientsCol
@@ -49,7 +49,7 @@ class ClientService {
     await _clientsCol.doc(clientId).delete();
   }
 
-  // ── Sales ──────────────────────────────────────────────────────────────────
+
 
   Stream<List<ClientSaleModel>> salesStream(String clientId) {
     return _salesCol(clientId)
@@ -61,7 +61,6 @@ class ClientService {
             .toList());
   }
 
-  /// Add a sale and atomically update client totals
   Future<void> addSale(ClientSaleModel sale) async {
     final batch = _db.batch();
 
@@ -78,7 +77,6 @@ class ClientService {
       userId: _uid,
     ).toMap());
 
-    // Update client summary
     final outstanding = sale.totalAmount - sale.paidAmount;
     batch.update(_clientsCol.doc(sale.clientId), {
       'totalSpend': FieldValue.increment(sale.totalAmount),
@@ -89,7 +87,7 @@ class ClientService {
     await batch.commit();
   }
 
-  /// Record a partial or full payment against a sale
+
   Future<void> recordPayment({
     required String clientId,
     required String saleId,
@@ -109,7 +107,7 @@ class ClientService {
       'status': newStatus.name,
     });
 
-    // Reduce outstanding balance on client doc
+
     batch.update(_clientsCol.doc(clientId), {
       'outstandingBalance': FieldValue.increment(-paymentAmount),
     });

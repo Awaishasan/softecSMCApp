@@ -5,24 +5,23 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../models/transaction_model.dart';
 import '../services/cash_flow_service.dart';
 
-// Date range presets
+
 enum DateRangeFilter { last7, last30, custom }
 
 class CashFlowController extends GetxController {
   final CashFlowService _service = CashFlowService();
 
-  // ── Summary ────────────────────────────────────────────────────────────────
   double totalBalance = 0;
   double monthlySales = 0;
   double monthlyExpenses = 0;
   double pendingReceivables = 0;
   double pendingPayables = 0;
 
-  // ── Raw data ───────────────────────────────────────────────────────────────
+
   List<TransactionModel> transactions = []; // recent 10 for home
   List<TransactionModel> allTransactions = []; // full list for analytics
 
-  // ── Filters ────────────────────────────────────────────────────────────────
+
   int typeFilter = 0; // 0=All 1=Income 2=Expense
   DateRangeFilter dateFilter = DateRangeFilter.last7;
   DateTime? customFrom;
@@ -36,7 +35,7 @@ class CashFlowController extends GetxController {
   StreamSubscription? _txSub;
   StreamSubscription? _allTxSub;
 
-  // ── Computed: date window ──────────────────────────────────────────────────
+
   DateTime get _windowStart {
     final now = DateTime.now();
     switch (dateFilter) {
@@ -58,7 +57,7 @@ class CashFlowController extends GetxController {
     return DateTime(now.year, now.month, now.day, 23, 59, 59);
   }
 
-  // ── Computed: filtered list for analytics ─────────────────────────────────
+
   List<TransactionModel> get displayedTransactions {
     return allTransactions.where((t) {
       // date window
