@@ -6,15 +6,15 @@ import '../models/client_model.dart';
 import '../models/client_sale_model.dart';
 import '../services/client_service.dart';
 
-// Filter options for client list
+
 enum ClientFilter { all, hasBalance, regular, vip }
 
 class ClientController extends GetxController {
   final ClientService _service = ClientService();
 
-  // ── State ──────────────────────────────────────────────────────────────────
+
   List<ClientModel> allClients = [];
-  Map<String, List<ClientSaleModel>> salesCache = {}; // clientId → sales
+  Map<String, List<ClientSaleModel>> salesCache = {};
   Map<String, StreamSubscription> _saleSubs = {};
 
   String searchQuery = '';
@@ -24,7 +24,7 @@ class ClientController extends GetxController {
 
   StreamSubscription? _clientSub;
 
-  // ── Computed ───────────────────────────────────────────────────────────────
+
 
   List<ClientModel> get displayedClients {
     var list = allClients;
@@ -44,7 +44,7 @@ class ClientController extends GetxController {
         break;
     }
 
-    // search
+
     if (searchQuery.isNotEmpty) {
       final q = searchQuery.toLowerCase();
       list = list
@@ -57,21 +57,21 @@ class ClientController extends GetxController {
     return list;
   }
 
-  // Top 3 clients by total spend
+
   List<ClientModel> get topClients {
     final sorted = [...allClients]
       ..sort((a, b) => b.totalSpend.compareTo(a.totalSpend));
     return sorted.take(3).toList();
   }
 
-  // Clients with outstanding balance (defaulters)
+
   List<ClientModel> get defaulters =>
       allClients.where((c) => c.hasBalance).toList();
 
   double get totalOutstanding =>
       allClients.fold(0, (s, c) => s + c.outstandingBalance);
 
-  // ── Actions ────────────────────────────────────────────────────────────────
+
 
   void setSearch(String q) {
     searchQuery = q;
@@ -175,7 +175,7 @@ class ClientController extends GetxController {
     update();
   }
 
-  // Subscribe to a specific client's sales (called from detail screen)
+
   void subscribeSales(String clientId) {
     if (_saleSubs.containsKey(clientId)) return;
     _saleSubs[clientId] =
@@ -193,7 +193,7 @@ class ClientController extends GetxController {
   List<ClientSaleModel> salesFor(String clientId) =>
       salesCache[clientId] ?? [];
 
-  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
 
   @override
   void onInit() {

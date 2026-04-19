@@ -122,7 +122,7 @@ class AddMoneySheet extends StatelessWidget {
   }
 }
 
-// ── Shared sheet body ──────────────────────────────────────────────────────────
+
 
 class _CashFlowSheetBody extends StatelessWidget {
   final String title;

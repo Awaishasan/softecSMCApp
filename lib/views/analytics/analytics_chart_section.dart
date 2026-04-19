@@ -33,7 +33,6 @@ class AnalyticsChartSection extends StatelessWidget {
     final allValues = buckets.expand((b) => [b.income, b.expense]);
     final maxY = allValues.fold(0.0, (a, b) => a > b ? a : b);
 
-    // For 30-day view show every 5th label to avoid crowding
     final showEvery = buckets.length > 10 ? 5 : 1;
 
     return Container(

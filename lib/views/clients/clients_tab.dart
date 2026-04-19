@@ -38,12 +38,12 @@ class ClientsTab extends StatelessWidget {
                       color: AppColors.primaryBlue))
               : CustomScrollView(
                   slivers: [
-                    // ── Header ──────────────────────────────────────────
+
                     SliverToBoxAdapter(
                       child: _ClientsHeader(ctrl: ctrl),
                     ),
 
-                    // ── Search bar ──────────────────────────────────────
+
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -51,7 +51,7 @@ class ClientsTab extends StatelessWidget {
                       ),
                     ),
 
-                    // ── Filter chips ────────────────────────────────────
+
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -59,7 +59,7 @@ class ClientsTab extends StatelessWidget {
                       ),
                     ),
 
-                    // ── Client list ─────────────────────────────────────
+
                     ctrl.displayedClients.isEmpty
                         ? SliverFillRemaining(
                             child: _EmptyState(
@@ -125,7 +125,7 @@ class ClientsTab extends StatelessWidget {
   }
 }
 
-// ── Header with summary stats ──────────────────────────────────────────────────
+
 
 class _ClientsHeader extends StatelessWidget {
   final ClientController ctrl;
@@ -227,7 +227,6 @@ class _HeaderStat extends StatelessWidget {
   }
 }
 
-// ── Search bar ─────────────────────────────────────────────────────────────────
 
 class _SearchBar extends StatelessWidget {
   final ClientController ctrl;
@@ -261,7 +260,7 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-// ── Filter chips ───────────────────────────────────────────────────────────────
+
 
 class _FilterChips extends StatelessWidget {
   final ClientController ctrl;
@@ -319,7 +318,7 @@ class _FilterChips extends StatelessWidget {
   }
 }
 
-// ── Empty state ────────────────────────────────────────────────────────────────
+
 
 class _EmptyState extends StatelessWidget {
   final bool hasSearch;

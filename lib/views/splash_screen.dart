@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    // 65% of screen width — clearly visible on all screen sizes
+
     final logoSize = size.width * 0.65;
 
     return Scaffold(
@@ -82,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
             children: [
               const Spacer(flex: 2),
 
-              // ── Animated logo ──────────────────────────────────────
+
               ScaleTransition(
                 scale: _scale,
                 child: FadeTransition(
@@ -98,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
 
               SizedBox(height: size.height * 0.045),
 
-              // ── App name ───────────────────────────────────────────
+
               FadeTransition(
                 opacity: _textFade,
                 child: Column(

@@ -90,7 +90,7 @@ class DashboardView extends GetView<DashboardController> {
               ],
             ),
       actions: [
-        // Search icon — only visible on analytics tab
+
         if (onAnalytics || ctrl.isSearchVisible)
           IconButton(
             icon: Icon(

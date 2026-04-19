@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class SettingsViewModel extends GetxController {
-  // Preferences
+
   bool notificationsEnabled = true;
   bool biometricEnabled = false;
   bool darkModeEnabled = false;

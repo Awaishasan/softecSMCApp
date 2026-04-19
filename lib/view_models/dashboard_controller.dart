@@ -11,9 +11,7 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Forward search text to CashFlowController whenever it changes
     searchTextController.addListener(() {
-      // Only forward when on analytics tab (index 1)
       if (selectedIndex == 1) {
         Get.find<CashFlowController>()
             .setSearchQuery(searchTextController.text);
@@ -29,7 +27,7 @@ class DashboardController extends GetxController {
 
   void changeTabIndex(int index) {
     selectedIndex = index;
-    // Clear search when switching tabs
+
     if (isSearchVisible) {
       isSearchVisible = false;
       searchTextController.clear();
