@@ -1,15 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingsViewModel extends GetxController {
-  // Preferences
   bool notificationsEnabled = true;
-  bool biometricEnabled = false;
   bool darkModeEnabled = false;
-  String selectedCurrency = 'USD (\$)';
+  String selectedCurrency = 'PKR (₨)';
 
   static const currencies = [
-    'USD (\$)',
     'PKR (₨)',
+    'USD (\$)',
     'EUR (€)',
     'GBP (£)',
     'INR (₹)',
@@ -20,13 +19,10 @@ class SettingsViewModel extends GetxController {
     update();
   }
 
-  void toggleBiometric(bool val) {
-    biometricEnabled = val;
-    update();
-  }
-
   void toggleDarkMode(bool val) {
     darkModeEnabled = val;
+    // Actually switch the app theme
+    Get.changeThemeMode(val ? ThemeMode.dark : ThemeMode.light);
     update();
   }
 

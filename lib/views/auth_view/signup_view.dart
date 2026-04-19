@@ -4,16 +4,16 @@ import '../../res/app_colors.dart';
 import '../../res/Routes/appRoute.dart';
 import '../../view_models/auth_view_model.dart';
 
-class LoginView extends StatelessWidget {
-  LoginView({super.key});
+class SignupView extends StatelessWidget {
+  SignupView({super.key});
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); // Defined here to prevent accidental disposal
+  final TextEditingController confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // Media queries for responsiveness
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -30,6 +30,7 @@ class LoginView extends StatelessWidget {
                 children: [
                   SizedBox(height: screenHeight * 0.05),
 
+                  // App Name
                   Text(
                     'Mera Hisab',
                     style: TextStyle(
@@ -40,6 +41,7 @@ class LoginView extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.01),
 
+                  // Logo Circle
                   Container(
                     width: screenWidth * 0.22,
                     height: screenWidth * 0.22,
@@ -67,8 +69,9 @@ class LoginView extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.03),
 
+                  // Heading
                   const Text(
-                    'Welcome Back!',
+                    'Create Account',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w800,
@@ -77,7 +80,7 @@ class LoginView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Track income, expenses & pending easily.',
+                    'Sign up to start managing your cash flow.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
@@ -86,7 +89,7 @@ class LoginView extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.05),
 
-                  // Login Card Section
+                  // Signup Card Section
                   GetBuilder<AuthViewModel>(
                     init: AuthViewModel(),
                     builder: (controller) {
@@ -109,6 +112,7 @@ class LoginView extends StatelessWidget {
                             // Email Field
                             TextFormField(
                               controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 icon: Icon(Icons.email, color: AppColors.iconBlue),
                                 labelText: 'Email',
@@ -116,7 +120,7 @@ class LoginView extends StatelessWidget {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty || !value.contains('@')) {
-                                  return "Enter Correct Email";
+                                  return "Enter a valid email";
                                 }
                                 return null;
                               },
@@ -148,8 +152,37 @@ class LoginView extends StatelessWidget {
                               },
                             ),
                             const Divider(),
+                            // Confirm Password Field
+                            TextFormField(
+                              controller: confirmPasswordController,
+                              obscureText: controller.isPasswordHidden,
+                              decoration: InputDecoration(
+                                icon: const Icon(Icons.lock_outline, color: AppColors.iconBlue),
+                                labelText: 'Confirm Password',
+                                border: InputBorder.none,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    controller.isPasswordHidden
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: AppColors.iconBlue,
+                                  ),
+                                  onPressed: () => controller.togglePasswordVisibility(),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please confirm your password";
+                                }
+                                if (value != passwordController.text) {
+                                  return "Passwords do not match";
+                                }
+                                return null;
+                              },
+                            ),
+                            const Divider(),
                             const SizedBox(height: 15),
-                            // Login Button
+                            // Sign Up Button
                             SizedBox(
                               width: double.infinity,
                               height: 50,
@@ -158,7 +191,7 @@ class LoginView extends StatelessWidget {
                                   FocusScope.of(context).unfocus();
                                   if (_formKey.currentState!.validate()) {
                                     if (!controller.isLoading) {
-                                      controller.login(
+                                      controller.signUp(
                                         emailController.text.trim(),
                                         passwordController.text.trim(),
                                       );
@@ -174,7 +207,7 @@ class LoginView extends StatelessWidget {
                                 child: controller.isLoading
                                     ? const CircularProgressIndicator(color: Colors.white)
                                     : const Text(
-                                        'Login',
+                                        'Sign Up',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -183,42 +216,28 @@ class LoginView extends StatelessWidget {
                                       ),
                               ),
                             ),
-                            const SizedBox(height: 15),
-                            // Forgot Password
-                            // TextButton(
-                            //   onPressed: () {
-                            //     // Action for forgot password
-                            //   },
-                            //   child: const Text(
-                            //     'Forgot Password?',
-                            //     style: TextStyle(
-                            //       color: AppColors.accentOrange,
-                            //       fontWeight: FontWeight.w600,
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       );
                     },
                   ),
 
-                  SizedBox(height: screenHeight * 0.1),
+                  SizedBox(height: screenHeight * 0.04),
 
-                  // Bottom Text Section
+                  // Bottom: Already have an account? Login
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        "Don't have an account? ",
+                        "Already have an account? ",
                         style: TextStyle(color: AppColors.blackText),
                       ),
                       GestureDetector(
                         onTap: () {
-                          Get.toNamed(AppRoute.SigUp);
+                          Get.back();
                         },
                         child: const Text(
-                          "Sign Up",
+                          "Login",
                           style: TextStyle(
                             color: AppColors.accentOrange,
                             fontWeight: FontWeight.bold,

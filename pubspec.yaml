@@ -41,6 +41,8 @@ dependencies:
   fluttertoast: ^9.0.0
   fl_chart: ^0.70.2
   flutter_native_splash: ^2.4.3
+  pdf: ^3.11.1
+  printing: ^5.13.1
 
 dev_dependencies:
   flutter_test:

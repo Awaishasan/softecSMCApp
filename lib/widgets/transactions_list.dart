@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../view_models/cash_flow_controller.dart';
 import '../models/transaction_model.dart';
+import '../res/app_colors.dart';
+import '../view_models/cash_flow_controller.dart';
 import 'activity_item.dart';
 
 class TransactionsList extends StatelessWidget {
@@ -17,7 +18,7 @@ class TransactionsList extends StatelessWidget {
           child: Text(
             'No transactions yet.\nUse Send, Receive or Add Money to get started.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: AppColors.grayText),
           ),
         ),
       );
@@ -30,11 +31,13 @@ class TransactionsList extends StatelessWidget {
       itemBuilder: (context, index) {
         final tx = controller.transactions[index];
         return ActivityItem(
+          transactionId: tx.id,
           title: tx.title,
           subtitle: tx.subtitle,
           amount: tx.formattedAmount,
           time: tx.timeAgo,
           type: tx.type == TransactionType.income ? 'income' : 'expense',
+          onDelete: () => controller.deleteTransaction(tx.id),
         );
       },
     );

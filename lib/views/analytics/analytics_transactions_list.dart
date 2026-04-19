@@ -41,11 +41,13 @@ class AnalyticsTransactionsList extends StatelessWidget {
       itemBuilder: (context, index) {
         final tx = list[index];
         return ActivityItem(
+          transactionId: tx.id,
           title: tx.title,
           subtitle: tx.subtitle,
           amount: tx.formattedAmount,
           time: tx.timeAgo,
           type: tx.type == TransactionType.income ? 'income' : 'expense',
+          onDelete: () => ctrl.deleteTransaction(tx.id),
         );
       },
     );

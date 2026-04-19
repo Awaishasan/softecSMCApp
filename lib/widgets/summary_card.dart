@@ -6,7 +6,7 @@ class SummaryCard extends StatelessWidget {
   final String amount;
   final IconData icon;
   final Color iconColor;
-  final double progress;
+  final double progress; // 0.0 – 1.0, computed dynamically
   final String progressText;
 
   const SummaryCard({
@@ -21,6 +21,8 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pct = (progress.clamp(0.0, 1.0) * 100).toInt();
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -49,64 +51,76 @@ class SummaryCard extends StatelessWidget {
                 ),
                 child: Icon(icon, color: iconColor, size: 20),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    amount,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlue,
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      amount,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlue,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        progress >= 0 ? Icons.trending_up : Icons.trending_down,
-                        size: 14,
-                        color: progress >= 0 ? Colors.green : Colors.red,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        progressText,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: progress >= 0 ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.w600,
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.trending_up,
+                          size: 13,
+                          color: iconColor,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 3),
+                        Text(
+                          progressText,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: iconColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Text(
             title,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               color: AppColors.grayText,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: progress.abs(),
-              backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(iconColor),
-              minHeight: 6,
+          const SizedBox(height: 10),
+
+          // ── Animated progress bar ──────────────────────────────────
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: progress.clamp(0.0, 1.0)),
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeOutCubic,
+            builder: (_, value, __) => ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: value,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(iconColor),
+                minHeight: 6,
+              ),
             ),
           ),
-          const SizedBox(height: 8),
+
+          const SizedBox(height: 6),
           Align(
             alignment: Alignment.centerRight,
             child: Text(
-              '${(progress.abs() * 100).toInt()}%',
+              '$pct%',
               style: const TextStyle(
                 fontSize: 11,
                 color: AppColors.grayText,

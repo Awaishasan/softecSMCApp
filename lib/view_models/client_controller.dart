@@ -17,6 +17,10 @@ class ClientController extends GetxController {
   Map<String, List<ClientSaleModel>> salesCache = {}; // clientId → sales
   Map<String, StreamSubscription> _saleSubs = {};
 
+  // Paid sales across all clients (for home card + paid screen)
+  List<Map<String, dynamic>> allPaidSales = [];
+  StreamSubscription? _paidSalesSub;
+
   String searchQuery = '';
   ClientFilter activeFilter = ClientFilter.all;
   bool isLoading = true;
@@ -70,6 +74,11 @@ class ClientController extends GetxController {
 
   double get totalOutstanding =>
       allClients.fold(0, (s, c) => s + c.outstandingBalance);
+
+  /// Total amount paid by clients (fully paid sales only)
+  double get totalClientPayments =>
+      allPaidSales.fold(0.0, (s, sale) =>
+          s + ((sale['paidAmount'] as num?)?.toDouble() ?? 0));
 
   // ── Actions ────────────────────────────────────────────────────────────────
 
@@ -203,11 +212,16 @@ class ClientController extends GetxController {
       isLoading = false;
       update();
     });
+    _paidSalesSub = _service.allPaidSalesStream().listen((list) {
+      allPaidSales = list;
+      update();
+    });
   }
 
   @override
   void onClose() {
     _clientSub?.cancel();
+    _paidSalesSub?.cancel();
     for (final sub in _saleSubs.values) {
       sub.cancel();
     }

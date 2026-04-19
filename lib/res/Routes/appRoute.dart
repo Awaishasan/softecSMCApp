@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../views/auth_view/login_view.dart';
+import '../../views/auth_view/signup_view.dart';
 import '../../views/dashboard_view.dart';
 import '../../views/splash_screen.dart';
 import '../../bindings/dashboard_binding.dart';
@@ -21,6 +22,10 @@ class pageRoute {
     GetPage(
       name: AppRoute.LOGIN,
       page: () => LoginView(),
+    ),
+    GetPage(
+      name: AppRoute.SigUp,
+      page: () => SignupView(),
     ),
     GetPage(
       name: AppRoute.Dashboard,

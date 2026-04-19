@@ -6,6 +6,7 @@ import '../../view_models/client_controller.dart';
 import 'widgets/add_client_sheet.dart';
 import 'widgets/client_card.dart';
 import 'client_detail_screen.dart';
+import 'paid_clients_screen.dart';
 
 class ClientsTab extends StatelessWidget {
   const ClientsTab({super.key});
@@ -160,20 +161,24 @@ class _ClientsHeader extends StatelessWidget {
                 icon: Icons.account_balance_wallet_outlined,
                 color: Colors.orangeAccent,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               _HeaderStat(
                 label: 'Defaulters',
                 value: '${ctrl.defaulters.length}',
                 icon: Icons.warning_amber_rounded,
                 color: Colors.redAccent,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
+              // ── Payments Received — tappable ──────────────────────
               _HeaderStat(
-                label: 'VIP Clients',
-                value:
-                    '${ctrl.allClients.where((c) => c.type == ClientType.vip).length}',
-                icon: Icons.star_rounded,
-                color: Colors.amber,
+                label: 'Payments',
+                value: 'Rs ${ctrl.totalClientPayments.toStringAsFixed(0)}',
+                icon: Icons.check_circle_outline_rounded,
+                color: Colors.greenAccent,
+                onTap: () => Get.to(
+                  () => const PaidClientsScreen(),
+                  transition: Transition.rightToLeft,
+                ),
               ),
             ],
           ),
@@ -188,39 +193,57 @@ class _HeaderStat extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
+  final VoidCallback? onTap;
 
   const _HeaderStat({
     required this.label,
     required this.value,
     required this.icon,
     required this.color,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: color, size: 18),
-            const SizedBox(height: 6),
-            Text(value,
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            Text(label,
-                style: const TextStyle(
-                    fontSize: 9, color: Colors.white60),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
-          ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: onTap != null
+                ? Border.all(color: Colors.white.withOpacity(0.2))
+                : null,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: color, size: 16),
+                  if (onTap != null) ...[
+                    const Spacer(),
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        color: Colors.white38, size: 10),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                  overflow: TextOverflow.ellipsis),
+              Text(label,
+                  style: const TextStyle(
+                      fontSize: 9, color: Colors.white60),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
+            ],
+          ),
         ),
       ),
     );

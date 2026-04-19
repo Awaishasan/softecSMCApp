@@ -63,6 +63,11 @@ class CashFlowService {
     return doc.data() as Map<String, dynamic>;
   }
 
+  // Delete a transaction (does not reverse summary — use with care)
+  Future<void> deleteTransaction(String txId) async {
+    await _txCol.doc(txId).delete();
+  }
+
   // Stream recent 10 transactions (home screen)
   Stream<List<TransactionModel>> transactionsStream() {
     return _txCol

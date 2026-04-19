@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../res/app_colors.dart';
+import '../../services/pdf_export_service.dart';
 import '../../view_models/auth_view_model.dart';
+import '../../view_models/cash_flow_controller.dart';
 import '../../view_models/dashboard_controller.dart';
 import '../../view_models/settings_view_model.dart';
+import 'legal_screen.dart';
 import 'settings_profile_card.dart';
 import 'settings_section.dart';
 
@@ -30,14 +33,26 @@ class SettingsTab extends StatelessWidget {
                       color: AppColors.textBlue)),
               const SizedBox(height: 20),
 
-              // Profile card
               SettingsProfileCard(ctrl: dashCtrl),
               const SizedBox(height: 28),
 
-              // ── Preferences ──────────────────────────────────────────────
+              // ── Preferences ──────────────────────────────────────────
               SettingsSection(
                 title: 'Preferences',
                 tiles: [
+                  SettingsTile(
+                    icon: Icons.dark_mode_outlined,
+                    iconColor: Colors.indigo,
+                    title: 'Dark Mode',
+                    subtitle: ctrl.darkModeEnabled
+                        ? 'Dark theme active'
+                        : 'Light theme active',
+                    trailing: Switch(
+                      value: ctrl.darkModeEnabled,
+                      onChanged: ctrl.toggleDarkMode,
+                      activeColor: AppColors.primaryBlue,
+                    ),
+                  ),
                   SettingsTile(
                     icon: Icons.currency_exchange_rounded,
                     iconColor: AppColors.primaryBlue,
@@ -56,22 +71,11 @@ class SettingsTab extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SettingsTile(
-                    icon: Icons.dark_mode_outlined,
-                    iconColor: Colors.indigo,
-                    title: 'Dark Mode',
-                    subtitle: 'Coming soon',
-                    trailing: Switch(
-                      value: ctrl.darkModeEnabled,
-                      onChanged: ctrl.toggleDarkMode,
-                      activeColor: AppColors.primaryBlue,
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 20),
 
-              // ── Notifications ─────────────────────────────────────────────
+              // ── Notifications ─────────────────────────────────────────
               SettingsSection(
                 title: 'Notifications',
                 tiles: [
@@ -90,68 +94,29 @@ class SettingsTab extends StatelessWidget {
                     icon: Icons.payment_rounded,
                     iconColor: Colors.green,
                     title: 'Payment Reminders',
-                    subtitle: 'Get reminded about pending payables',
+                    subtitle: 'Alerts for pending payables',
                     onTap: () {},
                   ),
                 ],
               ),
               const SizedBox(height: 20),
 
-              // ── Security ──────────────────────────────────────────────────
-              SettingsSection(
-                title: 'Security',
-                tiles: [
-                  SettingsTile(
-                    icon: Icons.fingerprint_rounded,
-                    iconColor: Colors.teal,
-                    title: 'Biometric Lock',
-                    subtitle: 'Use fingerprint to unlock',
-                    trailing: Switch(
-                      value: ctrl.biometricEnabled,
-                      onChanged: ctrl.toggleBiometric,
-                      activeColor: AppColors.primaryBlue,
-                    ),
-                  ),
-                  SettingsTile(
-                    icon: Icons.lock_outline_rounded,
-                    iconColor: AppColors.primaryBlue,
-                    title: 'Change Password',
-                    onTap: () {},
-                  ),
-                  SettingsTile(
-                    icon: Icons.devices_rounded,
-                    iconColor: Colors.blueGrey,
-                    title: 'Active Sessions',
-                    subtitle: 'Manage logged-in devices',
-                    onTap: () {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // ── Data & Export ─────────────────────────────────────────────
+              // ── Data & Export ─────────────────────────────────────────
               SettingsSection(
                 title: 'Data & Export',
                 tiles: [
                   SettingsTile(
-                    icon: Icons.download_rounded,
-                    iconColor: Colors.blue,
+                    icon: Icons.picture_as_pdf_rounded,
+                    iconColor: Colors.red,
                     title: 'Export Transactions',
-                    subtitle: 'Download as CSV or PDF',
-                    onTap: () {},
-                  ),
-                  SettingsTile(
-                    icon: Icons.backup_rounded,
-                    iconColor: Colors.purple,
-                    title: 'Backup Data',
-                    subtitle: 'Sync to cloud',
-                    onTap: () {},
+                    subtitle: 'Download full history as PDF',
+                    onTap: () => _exportPdf(context),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
 
-              // ── About ─────────────────────────────────────────────────────
+              // ── About ─────────────────────────────────────────────────
               SettingsSection(
                 title: 'About',
                 tiles: [
@@ -164,21 +129,27 @@ class SettingsTab extends StatelessWidget {
                   ),
                   SettingsTile(
                     icon: Icons.privacy_tip_outlined,
-                    iconColor: Colors.grey,
+                    iconColor: Colors.teal,
                     title: 'Privacy Policy',
-                    onTap: () {},
+                    onTap: () => Get.to(
+                      () => const PrivacyPolicyScreen(),
+                      transition: Transition.rightToLeft,
+                    ),
                   ),
                   SettingsTile(
                     icon: Icons.description_outlined,
-                    iconColor: Colors.grey,
+                    iconColor: Colors.blueGrey,
                     title: 'Terms of Service',
-                    onTap: () {},
+                    onTap: () => Get.to(
+                      () => const TermsOfServiceScreen(),
+                      transition: Transition.rightToLeft,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
 
-              // ── Logout ────────────────────────────────────────────────────
+
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -203,6 +174,45 @@ class SettingsTab extends StatelessWidget {
     );
   }
 
+  Future<void> _exportPdf(BuildContext context) async {
+    final cashCtrl = Get.find<CashFlowController>();
+    final dashCtrl = Get.find<DashboardController>();
+
+    if (cashCtrl.allTransactions.isEmpty) {
+      Get.snackbar('No Data', 'No transactions to export yet.',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 12);
+      return;
+    }
+
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    try {
+      await PdfExportService.exportTransactions(
+        transactions: cashCtrl.allTransactions,
+        totalBalance: cashCtrl.totalBalance,
+        totalIncome: cashCtrl.monthlySales,
+        totalExpenses: cashCtrl.monthlyExpenses,
+        userName: dashCtrl.getUserDisplayName(),
+      );
+    } catch (_) {
+      Get.snackbar('Export Failed', 'Could not generate PDF. Try again.',
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 12);
+    } finally {
+      if (Get.isDialogOpen ?? false) Get.back();
+    }
+  }
+
   void _showCurrencyPicker(BuildContext context, SettingsViewModel ctrl) {
     showModalBottomSheet(
       context: context,
@@ -215,12 +225,22 @@ class SettingsTab extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2)),
+              ),
+            ),
+            const SizedBox(height: 16),
             const Text('Select Currency',
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textBlue)),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             ...SettingsViewModel.currencies.map((c) => ListTile(
                   title: Text(c,
                       style: const TextStyle(color: AppColors.textBlue)),

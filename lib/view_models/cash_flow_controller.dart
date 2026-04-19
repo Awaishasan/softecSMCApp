@@ -111,6 +111,31 @@ class CashFlowController extends GetxController {
         .fold(0.0, (s, t) => s + t.amount);
   }
 
+  // ── Computed: dynamic progress ratios for Financial Overview ──────────────
+  // Uses the combined total (sales + expenses) as the ceiling so bars are relative
+  double get _financialCeiling {
+    final total = monthlySales + monthlyExpenses;
+    return total > 0 ? total : 1; // avoid division by zero
+  }
+
+  double get salesProgress =>
+      (monthlySales / _financialCeiling).clamp(0.0, 1.0);
+
+  double get expensesProgress =>
+      (monthlyExpenses / _financialCeiling).clamp(0.0, 1.0);
+
+  // Receivables & payables relative to their combined total
+  double get _receivablesCeiling {
+    final total = pendingReceivables + pendingPayables;
+    return total > 0 ? total : 1;
+  }
+
+  double get receivablesProgress =>
+      (pendingReceivables / _receivablesCeiling).clamp(0.0, 1.0);
+
+  double get payablesProgress =>
+      (pendingPayables / _receivablesCeiling).clamp(0.0, 1.0);
+
   // ── Actions ────────────────────────────────────────────────────────────────
   void setTypeFilter(int index) {
     typeFilter = index;
@@ -219,6 +244,16 @@ class CashFlowController extends GetxController {
         amount: amount,
         type: TransactionType.transfer,
         successMsg: 'Money added successfully');
+  }
+
+  Future<void> deleteTransaction(String transactionId) async {
+    try {
+      await _service.deleteTransaction(transactionId);
+      await _loadSummary();
+      _toast('Transaction deleted');
+    } catch (_) {
+      _toast('Failed to delete transaction', isError: true);
+    }
   }
 
   Future<void> _submit({

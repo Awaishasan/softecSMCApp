@@ -116,4 +116,19 @@ class ClientService {
 
     await batch.commit();
   }
+
+  /// Stream all paid sales across ALL clients using collectionGroup
+  Stream<List<Map<String, dynamic>>> allPaidSalesStream() {
+    return _db
+        .collectionGroup('sales')
+        .where('userId', isEqualTo: _uid)
+        .where('status', isEqualTo: SalePaymentStatus.paid.name)
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) {
+              final data = d.data() as Map<String, dynamic>;
+              final clientId = d.reference.parent.parent?.id ?? '';
+              return {...data, 'id': d.id, 'clientId': clientId};
+            }).toList());
+  }
 }
