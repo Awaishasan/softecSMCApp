@@ -1,16 +1,16 @@
 #Images 
 Onbaording Screen 
-<img width="1080" height="2062" alt="WhatsApp Image 2026-06-21 at 12 11 58 PM" src="https://github.com/user-attachments/assets/2a1e2f0d-bafe-485e-8cc7-e70fdedb10ed" />
+<img width="830" height="894" alt="WhatsApp Image 2026-06-21 at 12 11 58 PM" src="https://github.com/user-attachments/assets/2a1e2f0d-bafe-485e-8cc7-e70fdedb10ed" />
 Main Screen 
-<img width="820" height="1600" alt="WhatsApp Image 2026-06-21 at 12 11 59 PM (2)" src="https://github.com/user-attachments/assets/9a75162e-34b2-431a-b567-891839f3c746" />
+<img width="830" height="894" alt="WhatsApp Image 2026-06-21 at 12 11 59 PM (2)" src="https://github.com/user-attachments/assets/9a75162e-34b2-431a-b567-891839f3c746" />
 Transaction View 
-<img width="816" height="1600" alt="WhatsApp Image 2026-06-21 at 12 11 59 PM" src="https://github.com/user-attachments/assets/a19f4d82-f5f1-4beb-ba9c-97b0f0375f20" />
+<img width="830" height="894" alt="WhatsApp Image 2026-06-21 at 12 11 59 PM" src="https://github.com/user-attachments/assets/a19f4d82-f5f1-4beb-ba9c-97b0f0375f20" />
 Analytics 
-<img width="728" height="1600" alt="WhatsApp Image 2026-06-21 at 12 11 59 PM (1)" src="https://github.com/user-attachments/assets/09d5a733-2afc-4109-9640-6c434714dad4" />
+<img width="830" height="894" alt="WhatsApp Image 2026-06-21 at 12 11 59 PM (1)" src="https://github.com/user-attachments/assets/09d5a733-2afc-4109-9640-6c434714dad4" />
 Inout form feilds
-<img width="1076" height="2152" alt="WhatsApp Image 2026-06-21 at 12 12 00 PM" src="https://github.com/user-attachments/assets/d36a96e4-0e79-4998-bb0f-8f5983c66e61" />
+<img width="830" height="894" alt="WhatsApp Image 2026-06-21 at 12 12 00 PM" src="https://github.com/user-attachments/assets/d36a96e4-0e79-4998-bb0f-8f5983c66e61" />
 User profile View 
-<img width="806" height="1600" alt="WhatsApp Image 2026-06-21 at 12 12 00 PM (1)" src="https://github.com/user-attachments/assets/f5efe702-c8e1-44ba-a58f-41aeb73d7f18" />
+<img width="806" height="894" alt="WhatsApp Image 2026-06-21 at 12 12 00 PM (1)" src="https://github.com/user-attachments/assets/f5efe702-c8e1-44ba-a58f-41aeb73d7f18" />
 
 
 # Small Business Cash Flow Dashboard
