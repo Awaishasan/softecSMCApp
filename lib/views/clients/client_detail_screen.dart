@@ -7,6 +7,8 @@ import 'widgets/add_sale_sheet.dart';
 import 'widgets/client_balance_card.dart';
 import 'widgets/client_sales_list.dart';
 import 'widgets/client_stats_row.dart';
+import '../../services/pdf_export_service.dart';
+import '../../services/auth_services.dart';
 
 class ClientDetailScreen extends StatefulWidget {
   final ClientModel client;
@@ -17,11 +19,52 @@ class ClientDetailScreen extends StatefulWidget {
 }
 
 class _ClientDetailScreenState extends State<ClientDetailScreen> {
+  Set<String> selectedSaleIds = {};
+
   @override
   void initState() {
     super.initState();
     // Start streaming this client's sales
     Get.find<ClientController>().subscribeSales(widget.client.id);
+  }
+
+  void _toggleSelection(String id) {
+    setState(() {
+      if (selectedSaleIds.contains(id)) {
+        selectedSaleIds.remove(id);
+      } else {
+        selectedSaleIds.add(id);
+      }
+    });
+  }
+
+  void _selectAll(List<String> allIds) {
+    setState(() {
+      selectedSaleIds.addAll(allIds);
+    });
+  }
+
+  void _clearSelection() {
+    setState(() {
+      selectedSaleIds.clear();
+    });
+  }
+
+  Future<void> _exportSelected(ClientController ctrl, {bool printDirectly = false}) async {
+    final allSales = ctrl.salesFor(widget.client.id);
+    final selectedSales = allSales.where((s) => selectedSaleIds.contains(s.id)).toList();
+    if (selectedSales.isEmpty) return;
+
+    final auth = AuthServices();
+    final userName = auth.currentUser?.email?.split('@')[0] ?? 'Admin';
+
+    await PdfExportService.exportPurchaseInvoices(
+      sales: selectedSales,
+      client: widget.client,
+      userName: userName,
+      printDirectly: printDirectly,
+    );
+    _clearSelection();
   }
 
   @override
@@ -58,8 +101,35 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
           backgroundColor: AppColors.backgroundLight,
           body: CustomScrollView(
             slivers: [
-
-              _ClientAppBar(client: client),
+              if (selectedSaleIds.isNotEmpty)
+                SliverAppBar(
+                  pinned: true,
+                  backgroundColor: AppColors.primaryBlue,
+                  leading: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: _clearSelection,
+                  ),
+                  title: Text('${selectedSaleIds.length} Selected', style: const TextStyle(color: Colors.white, fontSize: 18)),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.select_all, color: Colors.white),
+                      onPressed: () {
+                        final allIds = ctrl.salesFor(client.id).map((e) => e.id).toList();
+                        _selectAll(allIds);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.print, color: Colors.white),
+                      onPressed: () => _exportSelected(ctrl, printDirectly: true),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.share, color: Colors.white),
+                      onPressed: () => _exportSelected(ctrl),
+                    ),
+                  ],
+                )
+              else
+                _ClientAppBar(client: client),
 
               SliverToBoxAdapter(
                 child: Padding(
@@ -99,7 +169,17 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
 
 
                       ClientSalesList(
-                          clientId: client.id, ctrl: ctrl),
+                        clientId: client.id, 
+                        ctrl: ctrl,
+                        client: client,
+                        selectedSaleIds: selectedSaleIds,
+                        onSelect: _toggleSelection,
+                        onLongPress: (id) {
+                          if (selectedSaleIds.isEmpty) {
+                            _toggleSelection(id);
+                          }
+                        },
+                      ),
                       const SizedBox(height: 80),
                     ],
                   ),
@@ -109,7 +189,9 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
           ),
 
 
-          floatingActionButton: FloatingActionButton.extended(
+          floatingActionButton: selectedSaleIds.isNotEmpty 
+            ? null 
+            : FloatingActionButton.extended(
             onPressed: () => _showAddSale(context),
             backgroundColor: AppColors.primaryBlue,
             icon: const Icon(Icons.add_rounded, color: Colors.white),

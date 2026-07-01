@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../../models/client_model.dart';
 import '../../../models/client_sale_model.dart';
 import '../../../res/app_colors.dart';
 import '../../../view_models/client_controller.dart';
+import '../purchase_details_screen.dart';
 
 class ClientSalesList extends StatelessWidget {
   final String clientId;
   final ClientController ctrl;
+  final ClientModel client;
+  final Set<String> selectedSaleIds;
+  final Function(String) onSelect;
+  final Function(String) onLongPress;
 
-  const ClientSalesList(
-      {super.key, required this.clientId, required this.ctrl});
+  const ClientSalesList({
+    super.key, 
+    required this.clientId, 
+    required this.ctrl,
+    required this.client,
+    required this.selectedSaleIds,
+    required this.onSelect,
+    required this.onLongPress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +42,30 @@ class ClientSalesList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: sales.length,
-      itemBuilder: (_, i) => _SaleTile(sale: sales[i]),
+      itemBuilder: (_, i) {
+        final sale = sales[i];
+        final isSelected = selectedSaleIds.contains(sale.id);
+        
+        return GestureDetector(
+          onLongPress: () => onLongPress(sale.id),
+          onTap: () {
+            if (selectedSaleIds.isNotEmpty) {
+              onSelect(sale.id);
+            } else {
+              Get.to(() => PurchaseDetailsScreen(sale: sale, client: client));
+            }
+          },
+          child: _SaleTile(sale: sale, isSelected: isSelected),
+        );
+      },
     );
   }
 }
 
 class _SaleTile extends StatelessWidget {
   final ClientSaleModel sale;
-  const _SaleTile({required this.sale});
+  final bool isSelected;
+  const _SaleTile({required this.sale, required this.isSelected});
 
   Color get _statusColor {
     switch (sale.status) {
@@ -54,11 +84,16 @@ class _SaleTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isSelected ? AppColors.primaryBlue.withOpacity(0.1) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.dividerGray.withOpacity(0.5)),
+        border: Border.all(
+          color: isSelected ? AppColors.primaryBlue : AppColors.dividerGray.withOpacity(0.5),
+          width: isSelected ? 1.5 : 1.0,
+        ),
       ),
-      child: Row(
+      child: Stack(
+        children: [
+          Row(
         children: [
           Container(
             padding: const EdgeInsets.all(9),
@@ -116,6 +151,21 @@ class _SaleTile extends StatelessWidget {
               ),
             ],
           ),
+        ],
+      ),
+      if (isSelected)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryBlue,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 12),
+              ),
+            ),
         ],
       ),
     );

@@ -136,6 +136,14 @@ class ClientController extends GetxController {
     required double paidAmount,
     required SalePaymentStatus status,
     DateTime? dueDate,
+    // Inventory fields
+    String? inventoryItemId,
+    String? productName,
+    int? quantity,
+    double? unitPrice,
+    double? discount,
+    DiscountType? discountType,
+    double? finalAmount,
   }) async {
     isSubmitting = true;
     update();
@@ -150,10 +158,19 @@ class ClientController extends GetxController {
         date: DateTime.now(),
         dueDate: dueDate,
         userId: '',
+        // Inventory fields
+        inventoryItemId: inventoryItemId,
+        productName: productName,
+        quantity: quantity,
+        unitPrice: unitPrice,
+        discount: discount,
+        discountType: discountType,
+        finalAmount: finalAmount,
       ));
       _toast('Sale recorded');
-    } catch (_) {
-      _toast('Failed to record sale', isError: true);
+    } catch (e) {
+      print('ERROR in addSale: $e');
+      _toast('Failed to record sale: ${e.toString()}', isError: true);
     }
     isSubmitting = false;
     update();

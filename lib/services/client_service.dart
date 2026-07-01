@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/client_model.dart';
 import '../models/client_sale_model.dart';
+import '../models/inventory_item.dart';
 
 class ClientService {
   final _db = FirebaseFirestore.instance;
@@ -14,6 +15,9 @@ class ClientService {
 
   CollectionReference _salesCol(String clientId) =>
       _clientsCol.doc(clientId).collection('sales');
+
+  CollectionReference get _inventoryCol =>
+      _db.collection('users').doc(_uid).collection('inventory');
 
 
 
@@ -75,6 +79,14 @@ class ClientService {
       date: sale.date,
       dueDate: sale.dueDate,
       userId: _uid,
+      // Inventory fields
+      inventoryItemId: sale.inventoryItemId,
+      productName: sale.productName,
+      quantity: sale.quantity,
+      unitPrice: sale.unitPrice,
+      discount: sale.discount,
+      discountType: sale.discountType,
+      finalAmount: sale.finalAmount,
     ).toMap());
 
     final outstanding = sale.totalAmount - sale.paidAmount;
@@ -83,6 +95,28 @@ class ClientService {
       'outstandingBalance': FieldValue.increment(outstanding),
       'lastVisit': Timestamp.fromDate(sale.date),
     });
+
+    // Stock deduction if sale has inventory data
+    if (sale.hasInventoryData && sale.inventoryItemId != null && sale.quantity != null) {
+      // Fetch current inventory item to check stock
+      final inventoryDoc = await _inventoryCol.doc(sale.inventoryItemId).get();
+      if (inventoryDoc.exists) {
+        final currentQuantity = (inventoryDoc.data() as Map<String, dynamic>)['quantity'] as int? ?? 0;
+        
+        // Validate stock availability
+        if (currentQuantity < sale.quantity!) {
+          throw Exception('Not enough stock available. Current: $currentQuantity, Required: ${sale.quantity}');
+        }
+        
+        // Deduct stock in the same batch
+        batch.update(_inventoryCol.doc(sale.inventoryItemId), {
+          'quantity': FieldValue.increment(-sale.quantity!),
+          'updatedAt': Timestamp.fromDate(DateTime.now()),
+        });
+      } else {
+        throw Exception('Inventory item not found');
+      }
+    }
 
     await batch.commit();
   }

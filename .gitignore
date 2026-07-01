@@ -4,6 +4,11 @@
 *.pyc
 *.swp
 .DS_Store
+.env
+android/key.properties
+android/app/upload-keystore.jks
+android/app/release.jks
+serviceAccountKey.json
 .atom/
 .build/
 .buildlog/

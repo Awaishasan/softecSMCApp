@@ -36,8 +36,7 @@ class ClientModel {
       phone: m['phone'] ?? '',
       email: m['email'] ?? '',
       address: m['address'] ?? '',
-      type: ClientType.values.firstWhere(
-        (e) => e.name == m['type'],
+      type: ClientType.values.firstWhere((e) => e.name == m['type'],
         orElse: () => ClientType.walkIn,
       ),
       joinDate: (m['joinDate'] as Timestamp).toDate(),

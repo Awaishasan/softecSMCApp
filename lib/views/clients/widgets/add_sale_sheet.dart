@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../models/client_sale_model.dart';
+import '../../../models/inventory_item.dart';
 import '../../../res/app_colors.dart';
 import '../../../view_models/client_controller.dart';
+import '../../../view_models/inventory_controller.dart';
+import '../../inventory/product_selection_sheet.dart';
 
 class AddSaleSheet extends StatefulWidget {
   final String clientId;
@@ -20,16 +23,51 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
   final _itemCtrl = TextEditingController();
   final _totalCtrl = TextEditingController();
   final _paidCtrl = TextEditingController();
+  final _quantityCtrl = TextEditingController();
+  final _discountCtrl = TextEditingController();
 
+  InventoryItem? _selectedProduct;
   SalePaymentStatus _status = SalePaymentStatus.paid;
   DateTime? _dueDate;
+  DiscountType _discountType = DiscountType.fixed;
 
   @override
   void dispose() {
     _itemCtrl.dispose();
     _totalCtrl.dispose();
     _paidCtrl.dispose();
+    _quantityCtrl.dispose();
+    _discountCtrl.dispose();
     super.dispose();
+  }
+
+  void _onProductSelected(InventoryItem product) {
+    setState(() {
+      _selectedProduct = product;
+      _itemCtrl.text = product.name;
+      _totalCtrl.text = product.sellingPrice.toString();
+      _quantityCtrl.text = '1';
+      _calculateTotal();
+    });
+  }
+
+  void _calculateTotal() {
+    if (_selectedProduct == null) return;
+    
+    final quantity = int.tryParse(_quantityCtrl.text) ?? 1;
+    final discount = double.tryParse(_discountCtrl.text) ?? 0;
+    
+    double subtotal = _selectedProduct!.sellingPrice * quantity;
+    
+    if (_discountType == DiscountType.percentage) {
+      subtotal = subtotal - (subtotal * discount / 100);
+    } else {
+      subtotal = subtotal - discount;
+    }
+    
+    setState(() {
+      _totalCtrl.text = subtotal.toStringAsFixed(2);
+    });
   }
 
   // Auto-derive status from paid vs total amounts
@@ -125,18 +163,102 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                 ),
                 const SizedBox(height: 24),
 
-
-                _buildField(
-                  _itemCtrl,
-                  'Item / Service Description',
-                  Icons.inventory_2_outlined,
+                // Product Selection
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => ProductSelectionSheet(
+                        onProductSelected: _onProductSelected,
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundLight,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.inventory_2_outlined, color: AppColors.iconBlue, size: 20),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _selectedProduct?.name ?? 'Select Product',
+                            style: TextStyle(
+                              color: _selectedProduct != null ? AppColors.textBlue : AppColors.grayText,
+                              fontWeight: _selectedProduct != null ? FontWeight.w600 : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right, color: AppColors.iconBlue),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 12),
 
+                // Quantity (only shown when product is selected)
+                if (_selectedProduct != null) ...[
+                  _buildAmountField(
+                    _quantityCtrl,
+                    'Quantity',
+                    keyboardType: TextInputType.numberWithOptions(decimal: false),
+                    onChanged: (_) => _calculateTotal(),
+                  ),
+                  const SizedBox(height: 12),
+                ],
 
+                // Discount (only shown when product is selected)
+                if (_selectedProduct != null) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildAmountField(
+                          _discountCtrl,
+                          'Discount',
+                          required: false,
+                          onChanged: (_) => _calculateTotal(),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundLight,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.iconBlue.withOpacity(0.3)),
+                        ),
+                        child: DropdownButton<DiscountType>(
+                          value: _discountType,
+                          underline: const SizedBox.shrink(),
+                          items: const [
+                            DropdownMenuItem(value: DiscountType.fixed, child: Text('Rs')),
+                            DropdownMenuItem(value: DiscountType.percentage, child: Text('%')),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _discountType = value;
+                                _calculateTotal();
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                ],
+
+                // Total Amount (read-only when product is selected)
                 _buildAmountField(
                   _totalCtrl,
                   'Total Amount',
+                  readOnly: _selectedProduct != null,
                   onChanged: (_) => _updateStatus(),
                 ),
                 const SizedBox(height: 12),
@@ -220,6 +342,15 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                                 final paid = double.tryParse(
                                         _paidCtrl.text.trim()) ??
                                     0;
+                                
+                                // Prepare inventory data if product is selected
+                                final quantity = _selectedProduct != null 
+                                    ? int.tryParse(_quantityCtrl.text) ?? 1 
+                                    : null;
+                                final discount = _selectedProduct != null
+                                    ? double.tryParse(_discountCtrl.text) ?? 0
+                                    : null;
+                                
                                 await ctrl.addSale(
                                   clientId: widget.clientId,
                                   itemDescription: _itemCtrl.text.trim(),
@@ -227,6 +358,14 @@ class _AddSaleSheetState extends State<AddSaleSheet> {
                                   paidAmount: paid,
                                   status: _status,
                                   dueDate: _dueDate,
+                                  // Inventory fields
+                                  inventoryItemId: _selectedProduct?.id,
+                                  productName: _selectedProduct?.name,
+                                  quantity: quantity,
+                                  unitPrice: _selectedProduct?.sellingPrice,
+                                  discount: discount,
+                                  discountType: _discountType,
+                                  finalAmount: total,
                                 );
                                 Get.back();
                               }
@@ -290,17 +429,20 @@ Widget _buildAmountField(
   String label, {
   void Function(String)? onChanged,
   bool required = true,
+  bool readOnly = false,
+  TextInputType? keyboardType,
 }) {
   return TextFormField(
     controller: ctrl,
-    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+    keyboardType: keyboardType ?? const TextInputType.numberWithOptions(decimal: true),
     onChanged: onChanged,
+    readOnly: readOnly,
     decoration: InputDecoration(
       labelText: label,
       prefixIcon: const Icon(Icons.attach_money_rounded,
           color: AppColors.iconBlue, size: 20),
       filled: true,
-      fillColor: AppColors.backgroundLight,
+      fillColor: readOnly ? AppColors.backgroundLight.withOpacity(0.5) : AppColors.backgroundLight,
       border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none),

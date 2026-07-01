@@ -8,6 +8,7 @@ import 'home_tab.dart';
 import 'analytics/analytics_tab.dart';
 import 'clients/clients_tab.dart';
 import 'settings/settings_tab.dart';
+import 'inventory/inventory_tab.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({super.key});
@@ -26,6 +27,7 @@ class DashboardView extends GetView<DashboardController> {
             children: [
               HomeTab(controller: ctrl),
               const AnalyticsTab(),
+              const InventoryTab(),
               const ClientsTab(),
               const SettingsTab(),
             ],

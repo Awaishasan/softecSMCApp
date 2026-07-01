@@ -7,6 +7,7 @@ import '../widgets/balance_card.dart';
 import '../widgets/quick_actions_row.dart';
 import '../widgets/financial_stats_section.dart';
 import '../widgets/transactions_list.dart';
+import '../widgets/inventory_summary_card.dart';
 
 class HomeTab extends StatelessWidget {
   final DashboardController controller;
@@ -38,6 +39,8 @@ class HomeTab extends StatelessWidget {
               BalanceCard(controller: cashCtrl),
               const SizedBox(height: 30),
               const QuickActionsRow(),
+              const SizedBox(height: 35),
+              const InventorySummaryCard(),
               const SizedBox(height: 35),
               const Text(
                 'Financial Overview',
