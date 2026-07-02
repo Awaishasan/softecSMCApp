@@ -19,7 +19,7 @@ class ClientStatsRow extends StatelessWidget {
         const SizedBox(width: 10),
         _StatTile(
           label: 'Outstanding',
-          value: 'Rs ${client.outstandingBalance.toStringAsFixed(0)}',
+          value: 'Rs ${client.outstandingBalance > 0 ? client.outstandingBalance.toStringAsFixed(0) : '0'}',
           icon: Icons.account_balance_wallet_outlined,
           color: client.hasBalance ? Colors.orange : Colors.grey,
         ),

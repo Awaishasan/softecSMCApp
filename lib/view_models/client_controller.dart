@@ -73,7 +73,7 @@ class ClientController extends GetxController {
       allClients.where((c) => c.hasBalance).toList();
 
   double get totalOutstanding =>
-      allClients.fold(0, (s, c) => s + c.outstandingBalance);
+      allClients.fold(0, (s, c) => s + (c.outstandingBalance > 0 ? c.outstandingBalance : 0));
 
   /// Total amount paid by clients (fully paid sales only)
   double get totalClientPayments =>

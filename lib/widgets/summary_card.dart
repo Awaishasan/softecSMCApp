@@ -22,9 +22,17 @@ class SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pct = (progress.clamp(0.0, 1.0) * 100).toInt();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    
+    final double padding = isSmallScreen ? 8.0 : 10.0;
+    final double iconSize = isSmallScreen ? 16.0 : 20.0;
+    final double titleFontSize = isSmallScreen ? 11.0 : 13.0;
+    final double amountFontSize = isSmallScreen ? 13.0 : 15.0;
+    final double progressTextFontSize = isSmallScreen ? 9.0 : 11.0;
 
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -44,45 +52,50 @@ class SummaryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(isSmallScreen ? 6.0 : 8.0),
                 decoration: BoxDecoration(
                   color: iconColor.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: iconColor, size: 20),
+                child: Icon(icon, color: iconColor, size: iconSize),
               ),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      amount,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlue,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        amount,
+                        style: TextStyle(
+                          fontSize: amountFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlue,
+                        ),
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.trending_up,
-                          size: 13,
-                          color: iconColor,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          progressText,
-                          style: TextStyle(
-                            fontSize: 11,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.trending_up,
+                            size: isSmallScreen ? 11 : 13,
                             color: iconColor,
-                            fontWeight: FontWeight.w600,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 3),
+                          Text(
+                            progressText,
+                            style: TextStyle(
+                              fontSize: progressTextFontSize,
+                              color: iconColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -90,12 +103,15 @@ class SummaryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.grayText,
-              fontWeight: FontWeight.w500,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: titleFontSize,
+                color: AppColors.grayText,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           const SizedBox(height: 10),

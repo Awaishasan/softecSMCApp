@@ -21,6 +21,7 @@ class InventoryTab extends StatelessWidget {
         return Scaffold(
           backgroundColor: Colors.transparent,
           floatingActionButton: FloatingActionButton.extended(
+            heroTag: null,
             onPressed: _openAddProduct,
             backgroundColor: AppColors.primaryBlue,
             icon: const Icon(Icons.add_rounded, color: Colors.white),

@@ -9,6 +9,10 @@ class FinancialStatsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    final double spacing = isSmallScreen ? 8.0 : 15.0;
+
     return Column(
       children: [
         Row(
@@ -23,7 +27,7 @@ class FinancialStatsSection extends StatelessWidget {
                 progressText: 'Income',
               ),
             ),
-            const SizedBox(width: 15),
+            SizedBox(width: spacing),
             Expanded(
               child: SummaryCard(
                 title: 'Total Expenses',
@@ -36,7 +40,7 @@ class FinancialStatsSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: spacing),
         Row(
           children: [
             Expanded(
@@ -49,7 +53,7 @@ class FinancialStatsSection extends StatelessWidget {
                 progressText: 'Pending',
               ),
             ),
-            const SizedBox(width: 15),
+            SizedBox(width: spacing),
             Expanded(
               child: SummaryCard(
                 title: 'Payables',

@@ -68,12 +68,16 @@ class BalanceCard extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // ── Total balance amount ──────────────────────────────
-                Text(
-                  'PKR ${controller.totalBalance.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 27,
-                      fontWeight: FontWeight.bold),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'PKR ${controller.totalBalance.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(height: 20),
 
@@ -81,20 +85,25 @@ class BalanceCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _BalanceStat(
-                      label: 'Cash In',
-                      value:
-                          'PKR ${controller.monthlySales.toStringAsFixed(0)}',
-                      color: Colors.greenAccent,
-                      icon: Icons.arrow_downward_rounded,
+                    Expanded(
+                      child: _BalanceStat(
+                        label: 'Cash In',
+                        value:
+                            'PKR ${controller.monthlySales.toStringAsFixed(0)}',
+                        color: Colors.greenAccent,
+                        icon: Icons.arrow_downward_rounded,
+                      ),
                     ),
-                    _BalanceStat(
-                      label: 'Cash Out',
-                      value:
-                          'PKR ${controller.monthlyExpenses.toStringAsFixed(0)}',
-                      color: Colors.redAccent,
-                      icon: Icons.arrow_upward_rounded,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _BalanceStat(
+                        label: 'Cash Out',
+                        value:
+                            'PKR ${controller.monthlyExpenses.toStringAsFixed(0)}',
+                        color: Colors.redAccent,
+                        icon: Icons.arrow_upward_rounded,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                      ),
                     ),
                   ],
                 ),
@@ -121,18 +130,26 @@ class BalanceCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Client Payments',
-                        style: TextStyle(
-                            color: Colors.white70, fontSize: 13),
+                      const Expanded(
+                        child: Text(
+                          'Client Payments',
+                          style: TextStyle(
+                              color: Colors.white70, fontSize: 13),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      const Spacer(),
-                      Text(
-                        'PKR ${clientCtrl.totalClientPayments.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'PKR ${clientCtrl.totalClientPayments.toStringAsFixed(0)}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -185,14 +202,20 @@ class _BalanceStat extends StatelessWidget {
                 const TextStyle(color: Colors.white70, fontSize: 12)),
         const SizedBox(height: 4),
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: color, size: 13),
             const SizedBox(width: 4),
-            Text(value,
-                style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13)),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(value,
+                    style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13)),
+              ),
+            ),
           ],
         ),
       ],

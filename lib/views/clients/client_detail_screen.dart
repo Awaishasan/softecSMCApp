@@ -192,6 +192,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
           floatingActionButton: selectedSaleIds.isNotEmpty 
             ? null 
             : FloatingActionButton.extended(
+            heroTag: null,
             onPressed: () => _showAddSale(context),
             backgroundColor: AppColors.primaryBlue,
             icon: const Icon(Icons.add_rounded, color: Colors.white),

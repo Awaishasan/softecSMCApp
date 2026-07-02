@@ -29,6 +29,7 @@ class ClientsTab extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.backgroundLight,
           floatingActionButton: FloatingActionButton(
+            heroTag: null,
             onPressed: () => _showAddClient(context),
             backgroundColor: AppColors.primaryBlue,
             child: const Icon(Icons.person_add_rounded, color: Colors.white),

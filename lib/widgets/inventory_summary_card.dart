@@ -29,14 +29,18 @@ class InventorySummaryCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Inventory Overview',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textBlue,
+                const Expanded(
+                  child: Text(
+                    'Inventory Overview',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlue,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -46,6 +50,7 @@ class InventorySummaryCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         ctrl.lowStockCount > 0 ? Icons.warning_amber_outlined : Icons.check_circle,
@@ -53,12 +58,15 @@ class InventorySummaryCard extends StatelessWidget {
                         color: ctrl.lowStockCount > 0 ? Colors.orange : Colors.green,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        ctrl.lowStockCount > 0 ? '${ctrl.lowStockCount} Low Stock' : 'All Good',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: ctrl.lowStockCount > 0 ? Colors.orange : Colors.green,
+                      Flexible(
+                        child: Text(
+                          ctrl.lowStockCount > 0 ? '${ctrl.lowStockCount} Low Stock' : 'All Good',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: ctrl.lowStockCount > 0 ? Colors.orange : Colors.green,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
