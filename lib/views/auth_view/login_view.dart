@@ -20,9 +20,12 @@ class LoginView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth > 500 ? 40 : screenWidth * 0.08),
             child: Form(
               key: _formKey,
               child: Column(
@@ -234,6 +237,9 @@ class LoginView extends StatelessWidget {
           ),
         ),
       ),
-    );
+        )
+      )
+        );
+
   }
 }

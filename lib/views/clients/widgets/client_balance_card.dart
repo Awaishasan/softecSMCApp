@@ -96,6 +96,7 @@ class ClientBalanceCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      constraints: const BoxConstraints(maxWidth: 600),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => RecordPaymentSheet(

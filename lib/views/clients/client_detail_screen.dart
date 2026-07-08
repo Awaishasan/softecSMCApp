@@ -78,6 +78,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      constraints: const BoxConstraints(maxWidth: 600),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => AddSaleSheet(
@@ -99,7 +100,10 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.backgroundLight,
-          body: CustomScrollView(
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 900),
+              child: CustomScrollView(
             slivers: [
               if (selectedSaleIds.isNotEmpty)
                 SliverAppBar(
@@ -186,6 +190,8 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                 ),
               ),
             ],
+          ),
+            ),
           ),
 
 

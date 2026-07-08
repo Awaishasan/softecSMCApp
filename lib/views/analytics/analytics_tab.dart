@@ -15,66 +15,134 @@ class AnalyticsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<CashFlowController>(
       builder: (ctrl) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              const Text(
-                'Analytics',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textBlue),
-              ),
-              const Text(
-                'Your full transaction history',
-                style: TextStyle(fontSize: 14, color: AppColors.grayText),
-              ),
-              const SizedBox(height: 20),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isDesktop = constraints.maxWidth > 800;
 
-              // Date range chips
-              AnalyticsDateFilter(ctrl: ctrl),
-              const SizedBox(height: 20),
+            if (isDesktop) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Analytics',
+                      style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlue),
+                    ),
+                    const Text(
+                      'Your full transaction history',
+                      style: TextStyle(fontSize: 15, color: AppColors.grayText),
+                    ),
+                    const SizedBox(height: 25),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Left Column: Date Filters, AnalyticsSummaryRow, AnalyticsChartSection
+                        Expanded(
+                          flex: 5,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AnalyticsDateFilter(ctrl: ctrl),
+                              const SizedBox(height: 20),
+                              AnalyticsSummaryRow(ctrl: ctrl),
+                              const SizedBox(height: 20),
+                              AnalyticsChartSection(ctrl: ctrl),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 30),
+                        // Right Column: Filter tabs and the actual transactions list
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Transactions',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textBlue),
+                                  ),
+                                  Text(
+                                    '${ctrl.displayedTransactions.length} records',
+                                    style: const TextStyle(
+                                        fontSize: 13, color: AppColors.grayText),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              AnalyticsFilterTabs(ctrl: ctrl),
+                              const SizedBox(height: 16),
+                              AnalyticsTransactionsList(ctrl: ctrl),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }
 
-              // Income / Expense summary tiles
-              AnalyticsSummaryRow(ctrl: ctrl),
-              const SizedBox(height: 20),
-
-              // Bar chart (respects date range)
-              AnalyticsChartSection(ctrl: ctrl),
-              const SizedBox(height: 28),
-
-              // Header row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Mobile layout (default)
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 20),
                   const Text(
-                    'Transactions',
+                    'Analytics',
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textBlue),
                   ),
-                  Text(
-                    '${ctrl.displayedTransactions.length} records',
-                    style: const TextStyle(
-                        fontSize: 13, color: AppColors.grayText),
+                  const Text(
+                    'Your full transaction history',
+                    style: TextStyle(fontSize: 14, color: AppColors.grayText),
                   ),
+                  const SizedBox(height: 20),
+                  AnalyticsDateFilter(ctrl: ctrl),
+                  const SizedBox(height: 20),
+                  AnalyticsSummaryRow(ctrl: ctrl),
+                  const SizedBox(height: 20),
+                  AnalyticsChartSection(ctrl: ctrl),
+                  const SizedBox(height: 28),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Transactions',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlue),
+                      ),
+                      Text(
+                        '${ctrl.displayedTransactions.length} records',
+                        style: const TextStyle(
+                            fontSize: 13, color: AppColors.grayText),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  AnalyticsFilterTabs(ctrl: ctrl),
+                  const SizedBox(height: 16),
+                  AnalyticsTransactionsList(ctrl: ctrl),
+                  const SizedBox(height: 30),
                 ],
               ),
-              const SizedBox(height: 12),
-
-              // Type filter tabs (All / Income / Expense)
-              AnalyticsFilterTabs(ctrl: ctrl),
-              const SizedBox(height: 16),
-
-              // Filtered + searched list
-              AnalyticsTransactionsList(ctrl: ctrl),
-              const SizedBox(height: 30),
-            ],
-          ),
+            );
+          },
         );
       },
     );

@@ -70,7 +70,14 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final logoSize = size.width * 0.65;
+    double logoSize = size.width * 0.65;
+    if (logoSize > 350) logoSize = 350;
+    
+    double mainFontSize = size.width * 0.075;
+    if (mainFontSize > 40) mainFontSize = 40;
+    
+    double subFontSize = size.width * 0.035;
+    if (subFontSize > 18) subFontSize = 18;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFDFAFA),
@@ -108,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
                       'CASHFLOW',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: size.width * 0.075,
+                        fontSize: mainFontSize,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 5,
                       ),
@@ -118,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen>
                       'DASHBOARD',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: size.width * 0.035,
+                        fontSize: subFontSize,
                         fontWeight: FontWeight.w400,
                         letterSpacing: 7,
                       ),

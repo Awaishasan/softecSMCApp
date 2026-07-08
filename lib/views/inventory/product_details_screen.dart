@@ -33,117 +33,122 @@ class ProductDetailsScreen extends StatelessWidget {
         ],
       ),
       body: GetBuilder<InventoryController>(
-        builder: (ctrl) => SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Product Image
-              Center(
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: item.imageUrl == null
-                      ? const Icon(Icons.inventory_2_outlined,
-                          color: AppColors.iconBlue, size: 60)
-                      : item.imageUrl!.startsWith('data:image')
-                          ? Image.memory(
-                              base64Decode(item.imageUrl!.split(',').last),
-                              fit: BoxFit.cover,
-                              width: 150,
-                              height: 150,
-                              errorBuilder: (_, __, ___) => const Icon(
-                                  Icons.broken_image,
-                                  color: AppColors.iconBlue, size: 60),
-                            )
-                          : Image.network(
-                              item.imageUrl!,
-                              fit: BoxFit.cover,
-                              width: 150,
-                              height: 150,
-                              errorBuilder: (_, __, ___) => const Icon(
-                                  Icons.broken_image,
-                                  color: AppColors.iconBlue, size: 60),
-                            ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Product Name
-              Text(
-                item.name,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlue,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              // Category Badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  item.category,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryBlue,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Stock Status
-              _buildStockStatus(),
-              const SizedBox(height: 24),
-
-              // Details Card
-              _buildDetailCard(context, ctrl),
-              const SizedBox(height: 24),
-
-              // Stock Adjustment Buttons
-              Row(
+        builder: (ctrl) => Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showStockAdjustment(context, ctrl, true),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Stock'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                  // Product Image
+                  Center(
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: item.imageUrl == null
+                          ? const Icon(Icons.inventory_2_outlined,
+                              color: AppColors.iconBlue, size: 60)
+                          : item.imageUrl!.startsWith('data:image')
+                              ? Image.memory(
+                                  base64Decode(item.imageUrl!.split(',').last),
+                                  fit: BoxFit.cover,
+                                  width: 150,
+                                  height: 150,
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                      Icons.broken_image,
+                                      color: AppColors.iconBlue, size: 60),
+                                )
+                              : Image.network(
+                                  item.imageUrl!,
+                                  fit: BoxFit.cover,
+                                  width: 150,
+                                  height: 150,
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                      Icons.broken_image,
+                                      color: AppColors.iconBlue, size: 60),
+                                ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Product Name
+                  Text(
+                    item.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlue,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Category Badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      item.category,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryBlue,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showStockAdjustment(context, ctrl, false),
-                      icon: const Icon(Icons.remove),
-                      label: const Text('Remove Stock'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                  const SizedBox(height: 24),
+
+                  // Stock Status
+                  _buildStockStatus(),
+                  const SizedBox(height: 24),
+
+                  // Details Card
+                  _buildDetailCard(context, ctrl),
+                  const SizedBox(height: 24),
+
+                  // Stock Adjustment Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showStockAdjustment(context, ctrl, true),
+                          icon: const Icon(Icons.add),
+                          label: const Text('Add Stock'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showStockAdjustment(context, ctrl, false),
+                          icon: const Icon(Icons.remove),
+                          label: const Text('Remove Stock'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

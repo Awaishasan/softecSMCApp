@@ -103,6 +103,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
+      constraints: const BoxConstraints(maxWidth: 600),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -315,10 +316,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
           centerTitle: false,
         ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 700),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -396,11 +400,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 ),
                 const SizedBox(height: 20),
               ],
+              ),
+            ),
+          ),
             ),
           ),
         ),
-      ),
-    );
+      );
+
   }
 
   // ─── Widgets ─────────────────────────────────────────────────────────────────

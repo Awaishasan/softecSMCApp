@@ -16,6 +16,7 @@ class ClientsTab extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      constraints: const BoxConstraints(maxWidth: 600),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => const AddClientSheet(),
@@ -38,60 +39,113 @@ class ClientsTab extends StatelessWidget {
               ? const Center(
                   child: CircularProgressIndicator(
                       color: AppColors.primaryBlue))
-              : CustomScrollView(
-                  slivers: [
-
-                    SliverToBoxAdapter(
-                      child: _ClientsHeader(ctrl: ctrl),
-                    ),
-
-
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                        child: _SearchBar(ctrl: ctrl),
-                      ),
-                    ),
-
-
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        child: _FilterChips(ctrl: ctrl),
-                      ),
-                    ),
-
-
-                    ctrl.displayedClients.isEmpty
-                        ? SliverFillRemaining(
-                            child: _EmptyState(
-                              hasSearch: ctrl.searchQuery.isNotEmpty,
-                            ),
-                          )
-                        : SliverPadding(
-                            padding:
-                                const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                            sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (_, i) {
-                                  final client = ctrl.displayedClients[i];
-                                  return ClientCard(
-                                    client: client,
-                                    onTap: () => Get.to(
-                                      () => ClientDetailScreen(
-                                          client: client),
-                                      transition: Transition.rightToLeft,
-                                    ),
-                                    onDelete: () =>
-                                        _confirmDelete(context, ctrl,
-                                            client.id, client.name),
-                                  );
-                                },
-                                childCount: ctrl.displayedClients.length,
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isDesktop = constraints.maxWidth > 800;
+                    
+                    if (isDesktop) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left side: stats and search
+                          Expanded(
+                            flex: 5,
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.only(bottom: 100),
+                              child: Column(
+                                children: [
+                                  _ClientsHeader(ctrl: ctrl),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                                    child: _SearchBar(ctrl: ctrl),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                                    child: _FilterChips(ctrl: ctrl),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                  ],
+                          const VerticalDivider(width: 1, color: AppColors.dividerGray),
+                          // Right side: list
+                          Expanded(
+                            flex: 6,
+                            child: ctrl.displayedClients.isEmpty
+                                ? _EmptyState(hasSearch: ctrl.searchQuery.isNotEmpty)
+                                : ListView.builder(
+                                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                                    itemCount: ctrl.displayedClients.length,
+                                    itemBuilder: (context, i) {
+                                      final client = ctrl.displayedClients[i];
+                                      return ClientCard(
+                                        client: client,
+                                        onTap: () => Get.to(
+                                          () => ClientDetailScreen(
+                                              client: client),
+                                          transition: Transition.rightToLeft,
+                                        ),
+                                        onDelete: () =>
+                                            _confirmDelete(context, ctrl,
+                                                client.id, client.name),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    // Mobile layout (default CustomScrollView)
+                    return CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: _ClientsHeader(ctrl: ctrl),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                            child: _SearchBar(ctrl: ctrl),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                            child: _FilterChips(ctrl: ctrl),
+                          ),
+                        ),
+                        ctrl.displayedClients.isEmpty
+                            ? SliverFillRemaining(
+                                child: _EmptyState(
+                                  hasSearch: ctrl.searchQuery.isNotEmpty,
+                                ),
+                              )
+                            : SliverPadding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                                sliver: SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (_, i) {
+                                      final client = ctrl.displayedClients[i];
+                                      return ClientCard(
+                                        client: client,
+                                        onTap: () => Get.to(
+                                          () => ClientDetailScreen(
+                                              client: client),
+                                          transition: Transition.rightToLeft,
+                                        ),
+                                        onDelete: () =>
+                                            _confirmDelete(context, ctrl,
+                                                client.id, client.name),
+                                      );
+                                    },
+                                    childCount: ctrl.displayedClients.length,
+                                  ),
+                                ),
+                              ),
+                      ],
+                    );
+                  },
                 ),
         );
       },

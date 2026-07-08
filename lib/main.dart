@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoute.SPLASH,
       getPages: pageRoute.pages,
-      themeMode: ThemeMode.light, // GetX will override this via Get.changeThemeMode()
+      themeMode: ThemeMode.light,
       theme: _lightTheme,
       darkTheme: _darkTheme,
     );

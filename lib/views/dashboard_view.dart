@@ -19,20 +19,57 @@ class DashboardView extends GetView<DashboardController> {
 
     return GetBuilder<DashboardController>(
       builder: (ctrl) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: _buildAppBar(ctrl, authViewModel),
-          body: IndexedStack(
-            index: ctrl.selectedIndex,
-            children: [
-              HomeTab(controller: ctrl),
-              const AnalyticsTab(),
-              const InventoryTab(),
-              const ClientsTab(),
-              const SettingsTab(),
-            ],
-          ),
-          bottomNavigationBar: DashboardBottomNav(controller: ctrl),
+        final content = IndexedStack(
+          index: ctrl.selectedIndex,
+          children: [
+            HomeTab(controller: ctrl),
+            const AnalyticsTab(),
+            const InventoryTab(),
+            const ClientsTab(),
+            const SettingsTab(),
+          ],
+        );
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isDesktop = constraints.maxWidth > 800;
+            
+            return Scaffold(
+              backgroundColor: Colors.white,
+              appBar: _buildAppBar(ctrl, authViewModel),
+              body: isDesktop
+                  ? Row(
+                      children: [
+                        NavigationRail(
+                          selectedIndex: ctrl.selectedIndex,
+                          onDestinationSelected: ctrl.changeTabIndex,
+                          labelType: NavigationRailLabelType.all,
+                          backgroundColor: Colors.white,
+                          selectedIconTheme: const IconThemeData(color: AppColors.primaryBlue),
+                          selectedLabelTextStyle: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold),
+                          unselectedIconTheme: IconThemeData(color: Colors.grey[400]),
+                          unselectedLabelTextStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+                          destinations: const [
+                            NavigationRailDestination(
+                                icon: Icon(Icons.home_rounded), label: Text('Home')),
+                            NavigationRailDestination(
+                                icon: Icon(Icons.bar_chart_rounded), label: Text('Analytics')),
+                            NavigationRailDestination(
+                                icon: Icon(Icons.inventory_2_rounded), label: Text('Inventory')),
+                            NavigationRailDestination(
+                                icon: Icon(Icons.people_rounded), label: Text('Clients')),
+                            NavigationRailDestination(
+                                icon: Icon(Icons.person_outline_rounded), label: Text('Settings')),
+                          ],
+                        ),
+                        const VerticalDivider(thickness: 1, width: 1),
+                        Expanded(child: content),
+                      ],
+                    )
+                  : content,
+              bottomNavigationBar: isDesktop ? null : DashboardBottomNav(controller: ctrl),
+            );
+          },
         );
       },
     );

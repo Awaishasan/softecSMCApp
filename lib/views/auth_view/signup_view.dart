@@ -34,8 +34,11 @@ class _SignupViewState extends State<SignupView> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: w * 0.08),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: w > 500 ? 40 : w * 0.08),
           child: Form(
             key: _formKey,
             child: Column(
@@ -276,6 +279,8 @@ class _SignupViewState extends State<SignupView> {
                 ),
                 SizedBox(height: h * 0.04),
               ],
+            ),
+          ),
             ),
           ),
         ),

@@ -11,6 +11,7 @@ class QuickActionsRow extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      constraints: const BoxConstraints(maxWidth: 600),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -20,29 +21,39 @@ class QuickActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        QuickActionButton(
-          label: 'Send',
-          icon: Icons.arrow_upward_rounded,
-          color: Colors.blue,
-          onTap: () => _showSheet(context, SendMoneySheet()),
-        ),
-        QuickActionButton(
-          label: 'Receive',
-          icon: Icons.arrow_downward_rounded,
-          gradient: const LinearGradient(
-              colors: [Colors.tealAccent, Colors.green]),
-          onTap: () => _showSheet(context, ReceiveMoneySheet()),
-        ),
-        QuickActionButton(
-          label: 'Add Money',
-          icon: Icons.add_rounded,
-          gradient: AppColors.orangeGradient,
-          onTap: () => _showSheet(context, AddMoneySheet()),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 500;
+        
+        return Center(
+          child: Wrap(
+            spacing: isWide ? 40 : 20,
+            runSpacing: 16,
+            alignment: WrapAlignment.center,
+            children: [
+              QuickActionButton(
+                label: 'Send',
+                icon: Icons.arrow_upward_rounded,
+                color: Colors.blue,
+                onTap: () => _showSheet(context, SendMoneySheet()),
+              ),
+              QuickActionButton(
+                label: 'Receive',
+                icon: Icons.arrow_downward_rounded,
+                gradient: const LinearGradient(
+                    colors: [Colors.tealAccent, Colors.green]),
+                onTap: () => _showSheet(context, ReceiveMoneySheet()),
+              ),
+              QuickActionButton(
+                label: 'Add Money',
+                icon: Icons.add_rounded,
+                gradient: AppColors.orangeGradient,
+                onTap: () => _showSheet(context, AddMoneySheet()),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

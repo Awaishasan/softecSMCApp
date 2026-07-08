@@ -29,7 +29,10 @@ class PaidClientsScreen extends StatelessWidget {
         builder: (ctrl) {
           final paid = ctrl.allPaidSales;
 
-          return Column(
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 900),
+              child: Column(
             children: [
               // ── Summary banner ─────────────────────────────────────
               Container(
@@ -95,6 +98,8 @@ class PaidClientsScreen extends StatelessWidget {
                       ),
               ),
             ],
+          ),
+            ),
           );
         },
       ),

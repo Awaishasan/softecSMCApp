@@ -20,126 +20,131 @@ class SettingsTab extends StatelessWidget {
 
     return GetBuilder<SettingsViewModel>(
       builder: (ctrl) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              const Text('Settings',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlue)),
-              const SizedBox(height: 20),
-
-              SettingsProfileCard(ctrl: dashCtrl),
-              const SizedBox(height: 28),
-
-              // ── Preferences ──────────────────────────────────────────
-              SettingsSection(
-                title: 'Preferences',
-                tiles: [
-                  SettingsTile(
-                    icon: Icons.dark_mode_outlined,
-                    iconColor: Colors.indigo,
-                    title: 'Dark Mode',
-                    subtitle: ctrl.darkModeEnabled
-                        ? 'Dark theme active'
-                        : 'Light theme active',
-                    trailing: Switch(
-                      value: ctrl.darkModeEnabled,
-                      onChanged: ctrl.toggleDarkMode,
-                      activeColor: AppColors.primaryBlue,
-                    ),
-                  ),
-
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // ── Notifications ─────────────────────────────────────────
-              SettingsSection(
-                title: 'Notifications',
-                tiles: [
-                  SettingsTile(
-                    icon: Icons.payment_rounded,
-                    iconColor: Colors.green,
-                    title: 'Payment Reminders',
-                    subtitle: 'Alerts for pending payables',
-                    onTap: () {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // ── Data & Export ─────────────────────────────────────────
-              SettingsSection(
-                title: 'Data & Export',
-                tiles: [
-                  SettingsTile(
-                    icon: Icons.picture_as_pdf_rounded,
-                    iconColor: Colors.red,
-                    title: 'Export Transactions',
-                    subtitle: 'Download full history as PDF',
-                    onTap: () => _exportPdf(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // ── About ─────────────────────────────────────────────────
-              SettingsSection(
-                title: 'About',
-                tiles: [
-                  SettingsTile(
-                    icon: Icons.info_outline_rounded,
-                    iconColor: AppColors.primaryBlue,
-                    title: 'App Version',
-                    subtitle: '1.0.0',
-                    trailing: const SizedBox.shrink(),
-                  ),
-                  SettingsTile(
-                    icon: Icons.privacy_tip_outlined,
-                    iconColor: Colors.teal,
-                    title: 'Privacy Policy',
-                    onTap: () => Get.to(
-                      () => const PrivacyPolicyScreen(),
-                      transition: Transition.rightToLeft,
-                    ),
-                  ),
-                  SettingsTile(
-                    icon: Icons.description_outlined,
-                    iconColor: Colors.blueGrey,
-                    title: 'Terms of Service',
-                    onTap: () => Get.to(
-                      () => const TermsOfServiceScreen(),
-                      transition: Transition.rightToLeft,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: OutlinedButton.icon(
-                  onPressed: authCtrl.signOut,
-                  icon: const Icon(Icons.logout_rounded, color: Colors.red),
-                  label: const Text('Log Out',
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 700),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  const Text('Settings',
                       style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.w600)),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.red),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlue)),
+                  const SizedBox(height: 20),
+
+                  SettingsProfileCard(ctrl: dashCtrl),
+                  const SizedBox(height: 28),
+
+                  // ── Preferences ──────────────────────────────────────────
+                  SettingsSection(
+                    title: 'Preferences',
+                    tiles: [
+                      SettingsTile(
+                        icon: Icons.dark_mode_outlined,
+                        iconColor: Colors.indigo,
+                        title: 'Dark Mode',
+                        subtitle: ctrl.darkModeEnabled
+                            ? 'Dark theme active'
+                            : 'Light theme active',
+                        trailing: Switch(
+                          value: ctrl.darkModeEnabled,
+                          onChanged: ctrl.toggleDarkMode,
+                          activeColor: AppColors.primaryBlue,
+                        ),
+                      ),
+
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 20),
+
+                  // ── Notifications ─────────────────────────────────────────
+                  SettingsSection(
+                    title: 'Notifications',
+                    tiles: [
+                      SettingsTile(
+                        icon: Icons.payment_rounded,
+                        iconColor: Colors.green,
+                        title: 'Payment Reminders',
+                        subtitle: 'Alerts for pending payables',
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // ── Data & Export ─────────────────────────────────────────
+                  SettingsSection(
+                    title: 'Data & Export',
+                    tiles: [
+                      SettingsTile(
+                        icon: Icons.picture_as_pdf_rounded,
+                        iconColor: Colors.red,
+                        title: 'Export Transactions',
+                        subtitle: 'Download full history as PDF',
+                        onTap: () => _exportPdf(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // ── About ─────────────────────────────────────────────────
+                  SettingsSection(
+                    title: 'About',
+                    tiles: [
+                      SettingsTile(
+                        icon: Icons.info_outline_rounded,
+                        iconColor: AppColors.primaryBlue,
+                        title: 'App Version',
+                        subtitle: '1.0.0',
+                        trailing: const SizedBox.shrink(),
+                      ),
+                      SettingsTile(
+                        icon: Icons.privacy_tip_outlined,
+                        iconColor: Colors.teal,
+                        title: 'Privacy Policy',
+                        onTap: () => Get.to(
+                          () => const PrivacyPolicyScreen(),
+                          transition: Transition.rightToLeft,
+                        ),
+                      ),
+                      SettingsTile(
+                        icon: Icons.description_outlined,
+                        iconColor: Colors.blueGrey,
+                        title: 'Terms of Service',
+                        onTap: () => Get.to(
+                          () => const TermsOfServiceScreen(),
+                          transition: Transition.rightToLeft,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: OutlinedButton.icon(
+                      onPressed: authCtrl.signOut,
+                      icon: const Icon(Icons.logout_rounded, color: Colors.red),
+                      label: const Text('Log Out',
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.w600)),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ),
-              const SizedBox(height: 30),
-            ],
+            ),
           ),
         );
       },
@@ -189,6 +194,7 @@ class SettingsTab extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
+      constraints: const BoxConstraints(maxWidth: 600),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (_) => Padding(

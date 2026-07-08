@@ -31,35 +31,86 @@ class InventoryTab extends StatelessWidget {
             ),
           ),
           body: SafeArea(
-            child: Column(
-              children: [
-                // Summary Cards
-                _buildSummaryCards(ctrl),
-                const SizedBox(height: 12),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isDesktop = constraints.maxWidth > 800;
 
-                // Search and Filters
-                _buildSearchAndFilters(ctrl),
-                const SizedBox(height: 8),
-
-                // Products List
-                Expanded(
-                  child: ctrl.filteredItems.isEmpty
-                      ? _buildEmptyState(ctrl.searchQuery.isNotEmpty)
-                      : ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 80),
-                          itemCount: ctrl.filteredItems.length,
-                          itemBuilder: (context, index) {
-                            final item = ctrl.filteredItems[index];
-                            return InventoryProductCard(
-                              item: item,
-                              onTap: () => Get.to(() => ProductDetailsScreen(item: item)),
-                              onEdit: () => _openAddProduct(item: item),
-                              onDelete: () => _showDeleteDialog(ctrl, item),
-                            );
-                          },
+                if (isDesktop) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Left Column: Summary + Search & Filters
+                      Expanded(
+                        flex: 5,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.only(bottom: 100),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              _buildSummaryCards(ctrl),
+                              const SizedBox(height: 16),
+                              _buildSearchAndFilters(ctrl),
+                            ],
+                          ),
                         ),
-                ),
-              ],
+                      ),
+                      const VerticalDivider(width: 1, color: AppColors.dividerGray),
+                      // Right Column: Products List
+                      Expanded(
+                        flex: 6,
+                        child: ctrl.filteredItems.isEmpty
+                            ? _buildEmptyState(ctrl.searchQuery.isNotEmpty)
+                            : ListView.builder(
+                                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                                itemCount: ctrl.filteredItems.length,
+                                itemBuilder: (context, index) {
+                                  final item = ctrl.filteredItems[index];
+                                  return InventoryProductCard(
+                                    item: item,
+                                    onTap: () => Get.to(() => ProductDetailsScreen(item: item)),
+                                    onEdit: () => _openAddProduct(item: item),
+                                    onDelete: () => _showDeleteDialog(ctrl, item),
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  );
+                }
+
+                // Mobile Layout (default)
+                return Column(
+                  children: [
+                    // Summary Cards
+                    _buildSummaryCards(ctrl),
+                    const SizedBox(height: 12),
+
+                    // Search and Filters
+                    _buildSearchAndFilters(ctrl),
+                    const SizedBox(height: 8),
+
+                    // Products List
+                    Expanded(
+                      child: ctrl.filteredItems.isEmpty
+                          ? _buildEmptyState(ctrl.searchQuery.isNotEmpty)
+                          : ListView.builder(
+                              padding: const EdgeInsets.only(bottom: 80),
+                              itemCount: ctrl.filteredItems.length,
+                              itemBuilder: (context, index) {
+                                final item = ctrl.filteredItems[index];
+                                return InventoryProductCard(
+                                  item: item,
+                                  onTap: () => Get.to(() => ProductDetailsScreen(item: item)),
+                                  onEdit: () => _openAddProduct(item: item),
+                                  onDelete: () => _showDeleteDialog(ctrl, item),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         );
