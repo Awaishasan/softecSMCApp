@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../models/inventory_item.dart';
@@ -19,7 +20,8 @@ class ProductSelectionSheet extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          child: Column(
+          child: SafeArea(
+            child: Column(
             children: [
               // Handle
               Center(
@@ -89,6 +91,38 @@ class ProductSelectionSheet extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 12),
+
+              // Category Filter
+              if (ctrl.categories.length > 1)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: SizedBox(
+                    height: 40,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: ctrl.categories.length,
+                      itemBuilder: (context, index) {
+                        final category = ctrl.categories[index];
+                        final isSelected = ctrl.selectedCategory == category;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: FilterChip(
+                            label: Text(category),
+                            selected: isSelected,
+                            onSelected: (_) => ctrl.setCategory(category),
+                            selectedColor: AppColors.primaryBlue.withOpacity(0.2),
+                            checkmarkColor: AppColors.primaryBlue,
+                            labelStyle: TextStyle(
+                              color: isSelected ? AppColors.primaryBlue : AppColors.grayText,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
               const SizedBox(height: 16),
 
               // Products List
@@ -110,6 +144,7 @@ class ProductSelectionSheet extends StatelessWidget {
                       ),
               ),
             ],
+          ),
           ),
         );
       },
@@ -138,17 +173,26 @@ class ProductSelectionSheet extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.backgroundLight,
                   borderRadius: BorderRadius.circular(8),
-                  image: item.imageUrl != null
-                      ? DecorationImage(
-                          image: NetworkImage(item.imageUrl!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
                 ),
+                clipBehavior: Clip.antiAlias,
                 child: item.imageUrl == null
                     ? const Icon(Icons.inventory_2_outlined,
                         color: AppColors.iconBlue, size: 24)
-                    : null,
+                    : item.imageUrl!.startsWith('data:image')
+                        ? Image.memory(
+                            base64Decode(item.imageUrl!.split(',').last),
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(
+                                Icons.broken_image,
+                                color: AppColors.iconBlue, size: 24),
+                          )
+                        : Image.network(
+                            item.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(
+                                Icons.broken_image,
+                                color: AppColors.iconBlue, size: 24),
+                          ),
               ),
               const SizedBox(width: 16),
 

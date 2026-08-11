@@ -134,7 +134,7 @@ class InventoryController extends GetxController {
     required String name,
     required String category,
     required String sku,
-    String? barcode,
+    String? company,
     required double costPrice,
     required double sellingPrice,
     required int quantity,
@@ -149,7 +149,7 @@ class InventoryController extends GetxController {
         name: name,
         category: category,
         sku: sku,
-        barcode: barcode,
+        company: company,
         costPrice: costPrice,
         sellingPrice: sellingPrice,
         quantity: quantity,
@@ -189,6 +189,23 @@ class InventoryController extends GetxController {
       _toast('Product deleted successfully');
     } catch (e) {
       _toast('Failed to delete product: $e', isError: true);
+    }
+    isSubmitting = false;
+    update();
+  }
+
+  Future<void> deleteCategory(String categoryName) async {
+    isSubmitting = true;
+    update();
+    try {
+      await _service.deleteCategory(categoryName);
+      if (selectedCategory == categoryName) {
+        selectedCategory = 'All';
+      }
+      _toast('Category deleted successfully');
+      await _loadCategories();
+    } catch (e) {
+      _toast('Failed to delete category: $e', isError: true);
     }
     isSubmitting = false;
     update();

@@ -20,15 +20,11 @@ class InventoryTab extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: Colors.transparent,
-          floatingActionButton: FloatingActionButton.extended(
+          floatingActionButton: FloatingActionButton(
             heroTag: null,
             onPressed: _openAddProduct,
             backgroundColor: AppColors.primaryBlue,
-            icon: const Icon(Icons.add_rounded, color: Colors.white),
-            label: const Text(
-              'Add Product',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+            child: const Icon(Icons.add_rounded, color: Colors.white),
           ),
           body: SafeArea(
             child: LayoutBuilder(
@@ -47,8 +43,6 @@ class InventoryTab extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 16),
-                              _buildSummaryCards(ctrl),
                               const SizedBox(height: 16),
                               _buildSearchAndFilters(ctrl),
                             ],
@@ -82,10 +76,7 @@ class InventoryTab extends StatelessWidget {
                 // Mobile Layout (default)
                 return Column(
                   children: [
-                    // Summary Cards
-                    _buildSummaryCards(ctrl),
-                    const SizedBox(height: 12),
-
+                    const SizedBox(height: 16),
                     // Search and Filters
                     _buildSearchAndFilters(ctrl),
                     const SizedBox(height: 8),
@@ -115,66 +106,6 @@ class InventoryTab extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildSummaryCards(InventoryController ctrl) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildSummaryCard(
-              'Total Products',
-              '${ctrl.totalItems}',
-              Icons.inventory_2_outlined,
-              AppColors.primaryBlue,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildSummaryCard(
-              'Total Quantity',
-              '${ctrl.totalQuantity}',
-              Icons.inventory,
-              AppColors.iconBlue,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppColors.grayText,
-            ),
-          ),
-        ],
-      ),
     );
   }
 

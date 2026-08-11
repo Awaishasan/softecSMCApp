@@ -246,7 +246,7 @@ class ProductDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildDetailRow('SKU', item.sku),
-            _buildDetailRow('Barcode', item.barcode ?? 'N/A'),
+            _buildDetailRow('Company / Brand', item.company ?? 'N/A'),
             _buildDetailRow('Cost Price', 'Rs ${item.costPrice.toStringAsFixed(2)}'),
             _buildDetailRow('Selling Price', 'Rs ${item.sellingPrice.toStringAsFixed(2)}'),
             _buildDetailRow('Quantity', '${item.quantity} units'),

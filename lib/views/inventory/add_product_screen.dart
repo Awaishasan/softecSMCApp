@@ -22,7 +22,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   final _nameCtrl = TextEditingController();
   final _skuCtrl = TextEditingController();
-  final _barcodeCtrl = TextEditingController();
+  final _companyCtrl = TextEditingController();
   final _costPriceCtrl = TextEditingController();
   final _sellingPriceCtrl = TextEditingController();
   final _quantityCtrl = TextEditingController();
@@ -47,7 +47,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       final item = widget.item!;
       _nameCtrl.text = item.name;
       _skuCtrl.text = item.sku;
-      _barcodeCtrl.text = item.barcode ?? '';
+      _companyCtrl.text = item.company ?? '';
       _costPriceCtrl.text = item.costPrice.toString();
       _sellingPriceCtrl.text = item.sellingPrice.toString();
       _quantityCtrl.text = item.quantity.toString();
@@ -66,7 +66,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void dispose() {
     _nameCtrl.dispose();
     _skuCtrl.dispose();
-    _barcodeCtrl.dispose();
+    _companyCtrl.dispose();
     _costPriceCtrl.dispose();
     _sellingPriceCtrl.dispose();
     _quantityCtrl.dispose();
@@ -185,8 +185,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
       // Try Firebase Storage first
       final fileName = 'products/${DateTime.now().millisecondsSinceEpoch}.jpg';
       final ref = FirebaseStorage.instance.ref().child(fileName);
-      await ref.putFile(_pickedImageFile!);
-      final url = await ref.getDownloadURL();
+      await ref.putFile(_pickedImageFile!).timeout(const Duration(seconds: 5));
+      final url = await ref.getDownloadURL().timeout(const Duration(seconds: 5));
       return url;
     } catch (e) {
       debugPrint('Firebase Storage upload failed: $e');
@@ -265,7 +265,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         name: _nameCtrl.text.trim(),
         category: _selectedCategory!,
         sku: _skuCtrl.text.trim(),
-        barcode: _barcodeCtrl.text.trim().isEmpty ? null : _barcodeCtrl.text.trim(),
+        company: _companyCtrl.text.trim().isEmpty ? null : _companyCtrl.text.trim(),
         costPrice: double.parse(_costPriceCtrl.text.trim()),
         sellingPrice: double.parse(_sellingPriceCtrl.text.trim()),
         quantity: int.parse(_quantityCtrl.text.trim()),
@@ -277,7 +277,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         name: _nameCtrl.text.trim(),
         category: _selectedCategory,
         sku: _skuCtrl.text.trim(),
-        barcode: _barcodeCtrl.text.trim().isEmpty ? null : _barcodeCtrl.text.trim(),
+        company: _companyCtrl.text.trim().isEmpty ? null : _companyCtrl.text.trim(),
         costPrice: double.parse(_costPriceCtrl.text.trim()),
         sellingPrice: double.parse(_sellingPriceCtrl.text.trim()),
         quantity: int.parse(_quantityCtrl.text.trim()),
@@ -316,7 +316,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
           centerTitle: false,
         ),
-        body: Center(
+        body: SafeArea(
+          child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),
             child: Form(
@@ -337,7 +338,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 const SizedBox(height: 12),
                 _buildTextField(_skuCtrl, 'SKU', Icons.tag),
                 const SizedBox(height: 12),
-                _buildTextField(_barcodeCtrl, 'Barcode (Optional)', Icons.qr_code, required: false),
+                _buildTextField(_companyCtrl, 'Company / Brand (Optional)', Icons.business, required: false),
                 const SizedBox(height: 24),
 
                 // ── Category ──────────────────────────────────────────────────
@@ -351,10 +352,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Expanded(child: _buildTextField(_costPriceCtrl, 'Cost Price', Icons.attach_money,
+                    Expanded(child: _buildTextField(_costPriceCtrl, 'Cost Price', Icons.money,
+                        prefixText: 'PKR ',
                         keyboardType: const TextInputType.numberWithOptions(decimal: true))),
                     const SizedBox(width: 12),
                     Expanded(child: _buildTextField(_sellingPriceCtrl, 'Selling Price', Icons.sell,
+                        prefixText: 'PKR ',
                         keyboardType: const TextInputType.numberWithOptions(decimal: true))),
                   ],
                 ),
@@ -406,7 +409,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
           ),
         ),
-      );
+          )
+    );
 
   }
 
@@ -512,13 +516,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
     IconData icon, {
     bool required = true,
     TextInputType? keyboardType,
+    String? prefixText,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: AppColors.iconBlue, size: 20),
+        prefixIcon: prefixText == null ? Icon(icon, color: AppColors.iconBlue, size: 20) : null,
+        prefixText: prefixText,
         filled: true,
         fillColor: AppColors.backgroundLight,
         border: OutlineInputBorder(
@@ -579,33 +585,32 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     ],
                   ),
                 )
-              : DropdownButtonFormField<String>(
-                  value: cats.contains(_selectedCategory) ? _selectedCategory : null,
-                  decoration: InputDecoration(
-                    labelText: 'Category',
-                    prefixIcon: const Icon(Icons.category, color: AppColors.iconBlue, size: 20),
-                    filled: true,
-                    fillColor: AppColors.backgroundLight,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                    focusedBorder: OutlineInputBorder(
+              : GestureDetector(
+                  onTap: () => _showCategoryPicker(ctrl, cats),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundLight,
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.primaryBlue, width: 1.5),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.category, color: AppColors.iconBlue, size: 20),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            cats.contains(_selectedCategory) ? _selectedCategory! : 'Select Category',
+                            style: TextStyle(
+                              color: cats.contains(_selectedCategory)
+                                  ? AppColors.textBlue
+                                  : AppColors.grayText,
+                            ),
+                          ),
+                        ),
+                        const Icon(Icons.arrow_drop_down_rounded, color: AppColors.iconBlue),
+                      ],
                     ),
                   ),
-                  // Deduplicate items to avoid assertion error
-                  items: cats.toSet().map((cat) =>
-                    DropdownMenuItem(value: cat, child: Text(cat))
-                  ).toList(),
-                  onChanged: (value) {
-                    if (value != null) setState(() => _selectedCategory = value);
-                  },
-                  validator: (_) {
-                    if (_selectedCategory == null || _selectedCategory!.isEmpty) return 'Required';
-                    return null;
-                  },
                 ),
         ),
         const SizedBox(width: 8),
@@ -622,6 +627,80 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showCategoryPicker(InventoryController ctrl, List<String> cats) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40, height: 4,
+              margin: const EdgeInsets.only(top: 16, bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const Text('Select Category',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: cats.length,
+                itemBuilder: (context, index) {
+                  final cat = cats[index];
+                  return ListTile(
+                    title: Text(cat),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+                      onPressed: () {
+                        Navigator.of(sheetCtx).pop();
+                        _confirmDeleteCategory(ctrl, cat);
+                      },
+                    ),
+                    onTap: () {
+                      setState(() => _selectedCategory = cat);
+                      Navigator.of(sheetCtx).pop();
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteCategory(InventoryController ctrl, String categoryName) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete Category'),
+        content: Text('Are you sure you want to delete "$categoryName"? Products in this category will be moved to "General".'),
+        actions: [
+          TextButton(onPressed: Get.back, child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              ctrl.deleteCategory(categoryName);
+              if (_selectedCategory == categoryName) {
+                setState(() => _selectedCategory = null);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
     );
   }
 }

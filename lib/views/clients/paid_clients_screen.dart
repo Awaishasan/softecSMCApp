@@ -27,7 +27,7 @@ class PaidClientsScreen extends StatelessWidget {
       ),
       body: GetBuilder<ClientController>(
         builder: (ctrl) {
-          final paid = ctrl.allPaidSales;
+          final paid = ctrl.allSales;
 
           return Center(
             child: ConstrainedBox(
@@ -49,7 +49,7 @@ class PaidClientsScreen extends StatelessWidget {
                             color: Colors.white70, fontSize: 13)),
                     const SizedBox(height: 6),
                     Text(
-                      'PKR ${ctrl.totalClientPayments.toStringAsFixed(2)}',
+                      'PKR ${ctrl.totalCollected.toStringAsFixed(2)}',
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 28,

@@ -208,28 +208,6 @@ class LoginView extends StatelessWidget {
 
                   SizedBox(height: screenHeight * 0.1),
 
-                  // Bottom Text Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don't have an account? ",
-                        style: TextStyle(color: AppColors.blackText),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed(AppRoute.SigUp);
-                        },
-                        child: const Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            color: AppColors.accentOrange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   SizedBox(height: screenHeight * 0.02),
                 ],
               ),

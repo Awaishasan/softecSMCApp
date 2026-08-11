@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/inventory_item.dart';
 import '../res/app_colors.dart';
@@ -36,17 +37,26 @@ class InventoryProductCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.backgroundLight,
                   borderRadius: BorderRadius.circular(8),
-                  image: item.imageUrl != null
-                      ? DecorationImage(
-                          image: NetworkImage(item.imageUrl!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
                 ),
+                clipBehavior: Clip.antiAlias,
                 child: item.imageUrl == null
                     ? const Icon(Icons.inventory_2_outlined,
                         color: AppColors.iconBlue, size: 30)
-                    : null,
+                    : item.imageUrl!.startsWith('data:image')
+                        ? Image.memory(
+                            base64Decode(item.imageUrl!.split(',').last),
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(
+                                Icons.broken_image,
+                                color: AppColors.iconBlue, size: 30),
+                          )
+                        : Image.network(
+                            item.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(
+                                Icons.broken_image,
+                                color: AppColors.iconBlue, size: 30),
+                          ),
               ),
               const SizedBox(width: 16),
               

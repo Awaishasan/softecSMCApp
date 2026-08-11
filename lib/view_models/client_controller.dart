@@ -17,9 +17,9 @@ class ClientController extends GetxController {
   Map<String, List<ClientSaleModel>> salesCache = {};
   Map<String, StreamSubscription> _saleSubs = {};
 
-  // Paid sales across all clients (for home card + paid screen)
-  List<Map<String, dynamic>> allPaidSales = [];
-  StreamSubscription? _paidSalesSub;
+  // All sales across all clients
+  List<Map<String, dynamic>> allSales = [];
+  StreamSubscription? _salesSub;
 
   String searchQuery = '';
   ClientFilter activeFilter = ClientFilter.all;
@@ -75,10 +75,94 @@ class ClientController extends GetxController {
   double get totalOutstanding =>
       allClients.fold(0, (s, c) => s + (c.outstandingBalance > 0 ? c.outstandingBalance : 0));
 
-  /// Total amount paid by clients (fully paid sales only)
-  double get totalClientPayments =>
-      allPaidSales.fold(0.0, (s, sale) =>
-          s + ((sale['paidAmount'] as num?)?.toDouble() ?? 0));
+  /// Total amount collected (paid + partial amounts) across all sales
+  double get totalCollected => allSales.fold(0.0,
+      (s, sale) => s + ((sale['paidAmount'] as num?)?.toDouble() ?? 0));
+
+  /// Total outstanding balance across all clients
+  double get totalOutstandingBalance =>
+      allClients.fold(0, (s, c) => s + (c.outstandingBalance > 0 ? c.outstandingBalance : 0));
+
+  /// Total sales revenue this month
+  double get monthlySalesRevenue {
+    final now = DateTime.now();
+    return allSales
+        .where((s) {
+          final date = _parseDate(s['date']);
+          return date != null && date.year == now.year && date.month == now.month;
+        })
+        .fold(0.0, (sum, s) => sum + ((s['totalAmount'] as num?)?.toDouble() ?? 0));
+  }
+
+  /// Number of unique customers who purchased this month
+  int get monthlyCustomerCount {
+    final now = DateTime.now();
+    return allSales
+        .where((s) {
+          final date = _parseDate(s['date']);
+          return date != null && date.year == now.year && date.month == now.month;
+        })
+        .map((s) => s['clientId'] as String?)
+        .where((id) => id != null)
+        .toSet()
+        .length;
+  }
+
+  /// Total items sold this month
+  int get monthlyItemsSold {
+    final now = DateTime.now();
+    return allSales
+        .where((s) {
+          final date = _parseDate(s['date']);
+          return date != null && date.year == now.year && date.month == now.month;
+        })
+        .fold(0, (sum, s) => sum + ((s['quantity'] as num?)?.toInt() ?? 1));
+  }
+
+  /// Monthly revenue grouped by month for charts (last 6 months)
+  List<Map<String, dynamic>> get monthlyRevenueChart {
+    final now = DateTime.now();
+    final months = <Map<String, dynamic>>[];
+    for (int i = 5; i >= 0; i--) {
+      final month = DateTime(now.year, now.month - i, 1);
+      final revenue = allSales
+          .where((s) {
+            final date = _parseDate(s['date']);
+            return date != null && date.year == month.year && date.month == month.month;
+          })
+          .fold(0.0, (sum, s) => sum + ((s['totalAmount'] as num?)?.toDouble() ?? 0));
+      months.add({'month': month, 'revenue': revenue});
+    }
+    return months;
+  }
+
+  /// Top items sold by quantity
+  List<Map<String, dynamic>> get topItemsSold {
+    final Map<String, Map<String, dynamic>> itemMap = {};
+    for (final sale in allSales) {
+      final name = sale['productName'] as String?;
+      if (name == null || name.isEmpty) continue;
+      final qty = (sale['quantity'] as num?)?.toInt() ?? 1;
+      final revenue = (sale['totalAmount'] as num?)?.toDouble() ?? 0;
+      if (itemMap.containsKey(name)) {
+        itemMap[name]!['qty'] = (itemMap[name]!['qty'] as int) + qty;
+        itemMap[name]!['revenue'] = (itemMap[name]!['revenue'] as double) + revenue;
+      } else {
+        itemMap[name] = {'name': name, 'qty': qty, 'revenue': revenue};
+      }
+    }
+    final list = itemMap.values.toList();
+    list.sort((a, b) => (b['qty'] as int).compareTo(a['qty'] as int));
+    return list.take(5).toList();
+  }
+
+  DateTime? _parseDate(dynamic val) {
+    if (val == null) return null;
+    if (val is DateTime) return val;
+    // Firestore Timestamp returns a Map-like object
+    try { return (val as dynamic).toDate() as DateTime; } catch (_) {}
+    return null;
+  }
 
   // ── Actions ────────────────────────────────────────────────────────────────
 
@@ -229,8 +313,8 @@ class ClientController extends GetxController {
       isLoading = false;
       update();
     });
-    _paidSalesSub = _service.allPaidSalesStream().listen((list) {
-      allPaidSales = list;
+    _salesSub = _service.allSalesStream().listen((list) {
+      allSales = list;
       update();
     });
   }
@@ -238,7 +322,7 @@ class ClientController extends GetxController {
   @override
   void onClose() {
     _clientSub?.cancel();
-    _paidSalesSub?.cancel();
+    _salesSub?.cancel();
     for (final sub in _saleSubs.values) {
       sub.cancel();
     }

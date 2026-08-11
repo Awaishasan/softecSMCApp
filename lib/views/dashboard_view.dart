@@ -23,9 +23,9 @@ class DashboardView extends GetView<DashboardController> {
           index: ctrl.selectedIndex,
           children: [
             HomeTab(controller: ctrl),
-            const AnalyticsTab(),
-            const InventoryTab(),
             const ClientsTab(),
+            const InventoryTab(),
+            const AnalyticsTab(),
             const SettingsTab(),
           ],
         );
@@ -138,25 +138,6 @@ class DashboardView extends GetView<DashboardController> {
             ),
             onPressed: ctrl.toggleSearch,
           ),
-        Stack(
-          children: [
-            IconButton(
-                icon: const Icon(Icons.notifications_none_rounded,
-                    color: AppColors.textBlue),
-                onPressed: () {}),
-            Positioned(
-              right: 12,
-              top: 12,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                    color: Colors.red, shape: BoxShape.circle),
-                child: const Text('1',
-                    style: TextStyle(color: Colors.white, fontSize: 8)),
-              ),
-            ),
-          ],
-        ),
         PopupMenuButton<String>(
           icon: const Icon(Icons.settings_outlined, color: AppColors.textBlue),
           onSelected: (value) {

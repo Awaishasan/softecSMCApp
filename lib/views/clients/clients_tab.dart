@@ -227,7 +227,7 @@ class _ClientsHeader extends StatelessWidget {
               // ── Payments Received — tappable ──────────────────────
               _HeaderStat(
                 label: 'Payments',
-                value: 'Rs ${ctrl.totalClientPayments.toStringAsFixed(0)}',
+                value: 'Rs ${ctrl.totalCollected.toStringAsFixed(0)}',
                 icon: Icons.check_circle_outline_rounded,
                 color: Colors.greenAccent,
                 onTap: () => Get.to(

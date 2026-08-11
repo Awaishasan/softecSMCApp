@@ -31,12 +31,12 @@ class InventoryService {
   // Add new inventory item
   Future<void> addItem(InventoryItem item) async {
     final ref = _inventoryCol.doc();
-    await ref.set(InventoryItem(
+    ref.set(InventoryItem(
       id: ref.id,
       name: item.name,
       category: item.category,
       sku: item.sku,
-      barcode: item.barcode,
+      company: item.company,
       costPrice: item.costPrice,
       sellingPrice: item.sellingPrice,
       quantity: item.quantity,
@@ -49,7 +49,7 @@ class InventoryService {
 
   // Update existing inventory item
   Future<void> updateItem(InventoryItem item) async {
-    await _inventoryCol.doc(item.id).update({
+    _inventoryCol.doc(item.id).update({
       ...item.toMap(),
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     });
@@ -57,12 +57,12 @@ class InventoryService {
 
   // Delete inventory item
   Future<void> deleteItem(String itemId) async {
-    await _inventoryCol.doc(itemId).delete();
+    _inventoryCol.doc(itemId).delete();
   }
 
   // Increase stock
   Future<void> increaseStock(String itemId, int amount) async {
-    await _inventoryCol.doc(itemId).update({
+    _inventoryCol.doc(itemId).update({
       'quantity': FieldValue.increment(amount),
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     });
@@ -70,7 +70,7 @@ class InventoryService {
 
   // Decrease stock
   Future<void> decreaseStock(String itemId, int amount) async {
-    await _inventoryCol.doc(itemId).update({
+    _inventoryCol.doc(itemId).update({
       'quantity': FieldValue.increment(-amount),
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     });
@@ -123,7 +123,13 @@ class InventoryService {
 
   // Calculate total inventory value
   Future<double> calculateInventoryValue() async {
-    final snapshot = await _inventoryCol.get();
+    QuerySnapshot snapshot;
+    try {
+      snapshot = await _inventoryCol.get().timeout(const Duration(seconds: 2));
+    } catch (_) {
+      snapshot = await _inventoryCol.get(const GetOptions(source: Source.cache));
+    }
+    
     double total = 0.0;
     for (final doc in snapshot.docs) {
       final item = InventoryItem.fromMap(doc.data() as Map<String, dynamic>, doc.id);
@@ -134,13 +140,29 @@ class InventoryService {
 
   // Get all unique categories
   Future<List<String>> getCategories() async {
-    final snapshot = await _inventoryCol.get();
+    QuerySnapshot snapshot;
+    try {
+      snapshot = await _inventoryCol.get().timeout(const Duration(seconds: 2));
+    } catch (_) {
+      snapshot = await _inventoryCol.get(const GetOptions(source: Source.cache));
+    }
+    
     final cats = snapshot.docs
         .map((doc) => (doc.data() as Map<String, dynamic>)['category'] as String? ?? '')
-        .where((cat) => cat.isNotEmpty)
+        .where((cat) => cat.isNotEmpty && cat != 'All')
         .toSet()
         .toList();
     cats.sort();
     return cats;
+  }
+
+  // Delete category (move items to General)
+  Future<void> deleteCategory(String categoryName) async {
+    final snapshot = await _inventoryCol.where('category', isEqualTo: categoryName).get();
+    final batch = _db.batch();
+    for (final doc in snapshot.docs) {
+      batch.update(doc.reference, {'category': 'General', 'updatedAt': Timestamp.fromDate(DateTime.now())});
+    }
+    await batch.commit();
   }
 }

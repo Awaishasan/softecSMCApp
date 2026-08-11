@@ -52,19 +52,25 @@ class CashFlowService {
     }
     batch.set(_summaryDoc, summaryUpdate, SetOptions(merge: true));
 
-    await batch.commit();
+    batch.commit(); // Fire and forget for offline-first responsiveness
   }
 
 
   Future<Map<String, dynamic>> fetchSummary() async {
-    final doc = await _summaryDoc.get();
+    DocumentSnapshot doc;
+    try {
+      doc = await _summaryDoc.get().timeout(const Duration(seconds: 2));
+    } catch (_) {
+      doc = await _summaryDoc.get(const GetOptions(source: Source.cache));
+    }
+    
     if (!doc.exists) return {};
     return doc.data() as Map<String, dynamic>;
   }
 
   // Delete a transaction (does not reverse summary — use with care)
   Future<void> deleteTransaction(String txId) async {
-    await _txCol.doc(txId).delete();
+    _txCol.doc(txId).delete();
   }
 
   // Stream recent 10 transactions (home screen)

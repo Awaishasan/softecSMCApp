@@ -33,7 +33,7 @@ class ClientService {
 
   Future<void> addClient(ClientModel client) async {
     final ref = _clientsCol.doc();
-    await ref.set(ClientModel(
+    ref.set(ClientModel(
       id: ref.id,
       name: client.name,
       phone: client.phone,
@@ -46,11 +46,11 @@ class ClientService {
   }
 
   Future<void> updateClient(ClientModel client) async {
-    await _clientsCol.doc(client.id).update(client.toMap());
+    _clientsCol.doc(client.id).update(client.toMap());
   }
 
   Future<void> deleteClient(String clientId) async {
-    await _clientsCol.doc(clientId).delete();
+    _clientsCol.doc(clientId).delete();
   }
 
 
@@ -98,27 +98,14 @@ class ClientService {
 
     // Stock deduction if sale has inventory data
     if (sale.hasInventoryData && sale.inventoryItemId != null && sale.quantity != null) {
-      // Fetch current inventory item to check stock
-      final inventoryDoc = await _inventoryCol.doc(sale.inventoryItemId).get();
-      if (inventoryDoc.exists) {
-        final currentQuantity = (inventoryDoc.data() as Map<String, dynamic>)['quantity'] as int? ?? 0;
-        
-        // Validate stock availability
-        if (currentQuantity < sale.quantity!) {
-          throw Exception('Not enough stock available. Current: $currentQuantity, Required: ${sale.quantity}');
-        }
-        
-        // Deduct stock in the same batch
-        batch.update(_inventoryCol.doc(sale.inventoryItemId), {
-          'quantity': FieldValue.increment(-sale.quantity!),
-          'updatedAt': Timestamp.fromDate(DateTime.now()),
-        });
-      } else {
-        throw Exception('Inventory item not found');
-      }
+      // Deduct stock in the same batch
+      batch.update(_inventoryCol.doc(sale.inventoryItemId), {
+        'quantity': FieldValue.increment(-sale.quantity!),
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
     }
 
-    await batch.commit();
+    batch.commit(); // Fire and forget for offline-first responsiveness
   }
 
 
@@ -146,15 +133,14 @@ class ClientService {
       'outstandingBalance': FieldValue.increment(-paymentAmount),
     });
 
-    await batch.commit();
+    batch.commit(); // Fire and forget
   }
 
-  /// Stream all paid sales across ALL clients using collectionGroup
-  Stream<List<Map<String, dynamic>>> allPaidSalesStream() {
+  /// Stream all sales across ALL clients using collectionGroup
+  Stream<List<Map<String, dynamic>>> allSalesStream() {
     return _db
         .collectionGroup('sales')
         .where('userId', isEqualTo: _uid)
-        .where('status', isEqualTo: SalePaymentStatus.paid.name)
         .orderBy('date', descending: true)
         .snapshots()
         .map((snap) => snap.docs.map((d) {
